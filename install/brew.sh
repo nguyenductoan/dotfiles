@@ -20,6 +20,7 @@ formulas=(
     the_silver_searcher
     tmux
     wget
+    ctags
 )
 
 for formula in "${formulas[@]}"; do
