@@ -34,7 +34,7 @@ NeoBundle 'vim-airline/vim-airline-themes'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'vim-scripts/grep.vim'
 NeoBundle 'bronson/vim-trailing-whitespace'
-NeoBundle 'Yggdroot/indentLine'
+"NeoBundle 'Yggdroot/indentLine'                          " look like it will cause performance issue
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'Shougo/deoplete.nvim'
 NeoBundle 'easymotion/vim-easymotion'
@@ -43,11 +43,14 @@ NeoBundle 'slim-template/vim-slim.git'
 NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 NeoBundle 'junegunn/fzf.vim'
 NeoBundle 'jiangmiao/auto-pairs'
-NeoBundle 'ivalkeen/vim-ctrlp-tjump'
+"NeoBundle 'ivalkeen/vim-ctrlp-tjump'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'christoomey/vim-tmux-navigator'                "  navigate seamlessly between vim and tmux splits
 NeoBundle 'majutsushi/tagbar'
+NeoBundle 'phongnh/vim-copypath'                          " copypath file name, file path
+NeoBundle 'leafgarland/typescript-vim'
+
 
 call neobundle#end()
 
@@ -77,12 +80,14 @@ set ruler                                                   " line and column nu
 set number
 set autoread                                                " automatically read file when it changed
 set backspace=indent,eol,start
-"set cursorline                                             " highlight current cursor line
+"set cursorline                                             " highlight current cursor line(performance issue)
 set scrolloff=3                                             " lines of text around cursor
 set wrap                                                    " turn on line wrapping
-set foldmethod=manual                                       " manual folding selected text
+"set foldmethod=manual                                      " manual folding selected text
+set foldmethod=indent
+set foldlevelstart=20
 
-"hi CursorLine term=bold cterm=bold guibg=Grey40<Paste>      " highlight line cursor
+hi CursorLine term=bold cterm=bold guibg=Grey40<Paste>      " highlight line cursor
 
 au BufRead,BufNewFile *.hamlc set ft=haml                   " hamlc syntax highlighting
 
@@ -109,6 +114,23 @@ set listchars=tab:→\ ,eol:¬,trail:⋅,extends:❯,precedes:❮
 set showbreak=↪
 set clipboard=unnamed
 set splitright
+
+syntime on " user with ':syntime report' to tract performance
+"set ttyfast " use for slow terminal
+"set lazyredraw " buffer screen updates instead of updating all the time
+
+
+" check one time after 4s of inactivity in normal mode (auto update file
+" change)
+au CursorHold * checktime
+
+"autoread when switch buffer or forcus on vim again
+au FocusGained,BufEnter * :silent! !
+
+" disable beep sound
+set noeb vb t_vb=
+
+set re=1
 
 " --------------------------------------------------------
 " VIM MAPPING
@@ -163,9 +185,21 @@ nmap + :vertical resize +5<cr>
 nmap _ :vertical resize -5<cr>
 
 " ZoomFullPanel
-nmap Z <C-w>\|
+"nmap Z <C-w>\|
 " UnZoom
-nmap z <C-w>=
+"nmap z <C-w>=
+
+" map folding
+nnoremap <Leader>f za
+
+" paste multiple times
+xnoremap p pgvy
+
+" map indentation key to tab
+nnoremap <TAB> >>
+nnoremap <S-TAB> <<
+vnoremap <TAB> >gv
+vnoremap <S-TAB> <gv
 
 " --------------------------------------------------------
 " Vim Airline
@@ -173,6 +207,13 @@ nmap z <C-w>=
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '◀'
+let airline#extensions#default#section_use_groupitems = 1
+let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
+let g:airline#extensions#tagbar#enabled = 0
+let g:airline_section_z = '%l/%L : %c'
+
 
 " --------------------------------------------------------
 " The Silver Searcher
@@ -183,6 +224,7 @@ if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  "
   "let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 
   " ag is fast enough that CtrlP doesn't need to cache
@@ -238,7 +280,7 @@ noremap <Leader>gr :Gremove<CR>
 " indextLine
 " --------------------------------------------------------
 
-let g:indentLine_enabled = 1
+"let g:indentLine_enabled = 1
 
 
 " --------------------------------------------------------
@@ -326,6 +368,17 @@ map <Leader>rv :RV<CR>
 
 
 " --------------------------------------------------------
+" vim-copypath
+" --------------------------------------------------------
+nnoremap <silent> yp :CopyRelativePath<CR>
+nnoremap <silent> yP :CopyRelativePath!<CR>
+nnoremap <silent> yu :CopyFullPath<CR>
+nnoremap <silent> yU :CopyFullPath!<CR>
+nnoremap <silent> yd :CopyParentPath<CR>
+nnoremap <silent> yD :CopyParentPath!<CR>
+
+
+" --------------------------------------------------------
 " MAPPING MISC
 " --------------------------------------------------------
 
@@ -342,7 +395,7 @@ let g:fzf_buffers_jump = 1
 "map <c-f> <ESC>:call fzf#vim#tags(expand("<cword>"), fzf#vim#layout(expand("<bang>0")))<cr>
 map <leader>a <ESC>:call SearchByKeyWordInAllFolders()<CR>
 map <leader>s :Files<CR>
-map <leader>f <ESC>:call SearchInSpecificFolder()<CR>
+map <leader>d <ESC>:call SearchInSpecificFolder()<CR>
 
 
 function! s:buflist()
@@ -362,6 +415,8 @@ nnoremap <silent> <Leader><Enter> :call fzf#run({
 \   'options': '+m',
 \   'down':    len(<sid>buflist()) + 2
 \ })<CR>
+
+map <leader>bb :Buffers<CR>
 
 " --------------------------------------------------------
 " FUNCTIONS
