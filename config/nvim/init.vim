@@ -50,11 +50,13 @@ NeoBundle 'christoomey/vim-tmux-navigator'                "  navigate seamlessly
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 'phongnh/vim-copypath'                          " copypath file name, file path
 NeoBundle 'leafgarland/typescript-vim'
-
+NeoBundle 'rhysd/clever-f.vim'
 
 call neobundle#end()
 
+
 filetype plugin indent on
+
 
 " If there are uninstalled bundles found on startup,
 " this will conveniently prompt you to install them.
@@ -131,7 +133,6 @@ au FocusGained,BufEnter * :silent! !
 set noeb vb t_vb=
 
 set re=1
-
 " --------------------------------------------------------
 " VIM MAPPING
 " --------------------------------------------------------
@@ -168,9 +169,10 @@ endif
 
 map <Leader>w :w<CR>                                        " Save file
 map <Leader>q :q<CR>                                        " Quit file
+map <Leader>e :e<CR>                                        " Edit file
 "map <Leader>qa :qa<CR>                                      " quit all files (it will cause slow on <Leader>q mapping)
 map <Silent><Leader>va <ESC>ggVG<CR>                        " Select all file
-map <C-a> <ESC>gg<S-v>G<ESC>
+map <C-a> <ESC>gg<S-v>G
 
 " copy and paste to system clipboard
 vmap <Leader>y "+y
@@ -196,8 +198,8 @@ nnoremap <Leader>f za
 xnoremap p pgvy
 
 " map indentation key to tab
-nnoremap <TAB> >>
-nnoremap <S-TAB> <<
+"nnoremap <TAB> >>
+"nnoremap <S-TAB> <<
 vnoremap <TAB> >gv
 vnoremap <S-TAB> <gv
 
@@ -393,11 +395,13 @@ map <C-c> "+y<CR>
 let g:fzf_buffers_jump = 1
 "map <silent> <leader>aa <ESC>:call fzf#vim#ag(expand("<cword>"), fzf#vim#layout(expand("<bang>0")))<cr>
 "map <c-f> <ESC>:call fzf#vim#tags(expand("<cword>"), fzf#vim#layout(expand("<bang>0")))<cr>
+
 map <leader>a <ESC>:call SearchByKeyWordInAllFolders()<CR>
-map <leader>s :Files<CR>
+map <leader>s <ESC>:call SearchByFileName()<CR>
 map <leader>d <ESC>:call SearchInSpecificFolder()<CR>
 
-
+let g:fzf_file_name_only=" -d '/' --nth=-1"
+let g:fzf_preview_source=" --preview 'pygmentize -g {} 2>/dev/null \|\| head -200 {}'"
 function! s:buflist()
   redir => ls
   silent ls
@@ -419,6 +423,14 @@ nnoremap <silent> <Leader><Enter> :call fzf#run({
 map <leader>bb :Buffers<CR>
 
 " --------------------------------------------------------
+" clever-f
+" --------------------------------------------------------
+
+let g:clever_f_across_no_line = 1
+
+
+" Super charged File finder
+" --------------------------------------------------------
 " FUNCTIONS
 " --------------------------------------------------------
 
@@ -427,13 +439,17 @@ function! Update_ruby_tags()
   return system('ctags -R --languages=ruby --exclude=.git --exclude=log . $(bundle list --paths)')
 endfunction
 
+function! SearchByFileName()
+  call fzf#vim#files('.', {'options': g:fzf_preview_source })
+endfunction
+
 function! SearchByKeyWordInAllFolders()
   call inputsave()
   let keyword = input('Enter keyword to search: ')
   "let dir = input('Enter keywod to search: ')
   call inputrestore()
   "call fzf#vim#ag(dir, "", fzf#vim#layout(expand("<bang>0")))
-  call fzf#vim#ag(keyword, '', fzf#vim#layout(expand("<bang>0")))
+  call fzf#vim#ag(keyword, { 'options': g:fzf_preview_source })
 endfunction
 
 function! SearchInSpecificFolder()
@@ -445,3 +461,5 @@ function! SearchInSpecificFolder()
   let current_dir = getcwd()                              " get current directory
   call fzf#vim#ag(keyword, { 'dir': current_dir . '/app/' . dir, 'down': '40%'})
 endfunction
+
+
