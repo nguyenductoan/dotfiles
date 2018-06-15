@@ -18,3 +18,7 @@ brew install qt@5.5
 echo "force Homebrew to symlink qt binaries"
 brew link --force qt@5.5
 
+echo "Installing elasticsearch 2.4"
+brew install elasticsearch@2.4
+brew services start elasticsearch@2.4
+

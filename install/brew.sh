@@ -48,6 +48,9 @@ brew services start mysql
 echo "installing neovim"
 pip3 install neovim
 
+echo "installing java"
+brew cask install java
+
 echo "installing Oh My Zsh via wget"
 sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 
@@ -55,8 +58,9 @@ sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/to
 echo -e "\n\nCopy config file..."
 echo "=============================="
 
-echo "copy gitcofig to root directory"
+echo "copy gitcofig and gitignore_global to root directory"
 cp ../git/.gitconfig ~/
+cp ../git/.gitignore_global ~/
 
 echo "copy inputrc config file"
 cp ..config/.inputrc ~/
