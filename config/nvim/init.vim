@@ -28,13 +28,14 @@ NeoBundle 'tpope/vim-rails'
 NeoBundle 'tpope/vim-bundler'
 NeoBundle 'tpope/vim-endwise'
 NeoBundle 'tpope/vim-surround.git'
+NeoBundle 'tpope/vim-rhubarb'                             " Enables :Gbrowse from fugitive.vim to open GitHub URLs.
 NeoBundle 'ctrlpvim/ctrlp.vim'
 NeoBundle 'vim-airline/vim-airline'
 NeoBundle 'vim-airline/vim-airline-themes'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'vim-scripts/grep.vim'
 NeoBundle 'bronson/vim-trailing-whitespace'
-"NeoBundle 'Yggdroot/indentLine'                          " look like it will cause performance issue
+NeoBundle 'Yggdroot/indentLine'                          " look like it will cause performance issue
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'Shougo/deoplete.nvim'
 NeoBundle 'easymotion/vim-easymotion'
@@ -51,6 +52,11 @@ NeoBundle 'majutsushi/tagbar'
 NeoBundle 'phongnh/vim-copypath'                          " copypath file name, file path
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'rhysd/clever-f.vim'
+NeoBundle 'mileszs/ack.vim'
+NeoBundle 'Glench/Vim-Jinja2-Syntax'
+NeoBundle 'mattn/emmet-vim'                               " high speed coding for html and css
+NeoBundle 'wesQ3/vim-windowswap'                          " use to swap window
+
 
 call neobundle#end()
 
@@ -83,13 +89,17 @@ set number
 set autoread                                                " automatically read file when it changed
 set backspace=indent,eol,start
 "set cursorline                                             " highlight current cursor line(performance issue)
+"set cursorcolumn
 set scrolloff=3                                             " lines of text around cursor
 set wrap                                                    " turn on line wrapping
 "set foldmethod=manual                                      " manual folding selected text
 set foldmethod=indent
 set foldlevelstart=20
+set wildmenu                                                " Turn on the WiLd menu
+set wildmode=longest:list,full
 
 hi CursorLine term=bold cterm=bold guibg=Grey40<Paste>      " highlight line cursor
+highlight ColorColumn cterm=NONE ctermbg=0 ctermfg=NONE guibg=Grey40
 
 au BufRead,BufNewFile *.hamlc set ft=haml                   " hamlc syntax highlighting
 
@@ -144,7 +154,7 @@ let mapleader = "\<Space>"
 inoremap jk <esc>
 
 " toggle cursor line
-nnoremap <leader>i :set cursorline!<cr>
+nnoremap <leader>lc :set cursorline!<cr>
 
 " scroll the viewport faster
 nnoremap <C-e> 3<C-e>
@@ -155,7 +165,7 @@ nnoremap <C-y> 3<C-y>
 "nnoremap <S-Tab> gT
 
 " open new tab
-nnoremap <silent> <S-t> :tabnew<CR>
+nnoremap <silent> <C-t> :tabnew<CR>
 
 " move between window
 nmap <C-j> <C-w>j
@@ -171,8 +181,8 @@ map <Leader>w :w<CR>                                        " Save file
 map <Leader>q :q<CR>                                        " Quit file
 map <Leader>e :e<CR>                                        " Edit file
 "map <Leader>qa :qa<CR>                                      " quit all files (it will cause slow on <Leader>q mapping)
-map <Silent><Leader>va <ESC>ggVG<CR>                        " Select all file
-map <C-a> <ESC>gg<S-v>G
+"map <Silent><Leader>va <ESC>ggVG<CR>                        " Select all file
+map <C-s> <ESC>gg<S-v>G
 
 " copy and paste to system clipboard
 vmap <Leader>y "+y
@@ -202,6 +212,16 @@ xnoremap p pgvy
 "nnoremap <S-TAB> <<
 vnoremap <TAB> >gv
 vnoremap <S-TAB> <gv
+
+" vertical split current buffer
+nnoremap <Leader>i :vsplit<CR>
+
+" Close all the buffers
+map <leader>ba :bufdo bd<cr>
+
+" Move to beginning/end of line
+nnoremap B ^
+nnoremap E $
 
 " --------------------------------------------------------
 " Vim Airline
@@ -310,6 +330,9 @@ let g:ctrlp_regexp = 1
 " --------------------------------------------------------
 
 nnoremap <leader>. :CtrlPTag<cr>
+nnoremap <leader>tn :tn<cr>                                 " Move to next tag
+nnoremap <leader>tp :tp<cr>                                 " Move to previous tag
+nnoremap <leader>ts :ts<cr>                                 " List all tags
 
 
 " --------------------------------------------------------
@@ -385,6 +408,7 @@ nnoremap <silent> yD :CopyParentPath!<CR>
 " --------------------------------------------------------
 
 map <silent> <leader>urt <ESC>:call Update_ruby_tags()<CR>
+map <silent> <leader>upt <ESC>:call Update_python_tags()<CR>
 map <C-c> "+y<CR>
 
 
@@ -429,6 +453,12 @@ map <leader>bb :Buffers<CR>
 let g:clever_f_across_no_line = 1
 
 
+" --------------------------------------------------------
+" vim-windowswap
+" --------------------------------------------------------
+nnoremap <silent> <leader>mm :call WindowSwap#EasyWindowSwap()<CR>
+
+
 " Super charged File finder
 " --------------------------------------------------------
 " FUNCTIONS
@@ -437,6 +467,12 @@ let g:clever_f_across_no_line = 1
 " Update ruby ctags
 function! Update_ruby_tags()
   return system('ctags -R --languages=ruby --exclude=.git --exclude=log . $(bundle list --paths)')
+endfunction
+
+" Update python ctags
+function! Update_python_tags()
+  return system('ctags -R --fields=+l --languages=python')
+)')
 endfunction
 
 function! SearchByFileName()
