@@ -1,0 +1,34 @@
+tmux has-session -t lixibox_env
+if [ $? != 0 ]
+then
+	#editor
+
+	tmux new-session -s lixibox_env -n editor -d
+
+	tmux send-keys -t lixibox_env 'cd ~/work/lixibox/lixibox' C-m
+	tmux split-window -v -l 12 -t lixibox_env # split vertical current window to 2 pane. `l` is length
+	tmux split-window -h -t lixibox_env:1.2 # split pane 2 of window 1 to 2 panes
+	tmux send-keys -t lixibox_env:1.1 'nvim' C-m # launch neovim in pane 1 of window 1
+	tmux send-keys -t lixibox_env:1.2 'cd ~/work/lixibox/lixibox' C-m # go to working directory in pane 2 of window 1
+	tmux send-keys -t lixibox_env:1.2 'rails c' C-m # run 'rails c' in pane 2 of window 1
+	tmux send-keys -t lixibox_env:1.3 'cd ~/work/lixibox/lixibox' C-m # go to working directory in pane 3 of window 1
+
+	# console and local server log
+
+	tmux new-window -n local -t lixibox_env
+	tmux send-keys -t lixibox_env:2 'cd ~/work/lixibox/lixibox' C-m
+	tmux send-keys -t lixibox_env:2 'rails s' C-m
+
+	# server
+	tmux new-window -n server -t lixibox_env
+	tmux split-window -h -t lixibox_env
+	tmux send-keys -t lixibox_env:3.1 'ey console -e live' C-m
+	tmux send-keys -t lixibox_env:3.2 'ey ssh -e live' C-m
+
+	# display first window of the session
+
+	tmux select-window -t lixibox_env:1
+	tmux select-pane -t 1
+fi
+tmux attach -t lixibox_env
+
