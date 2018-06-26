@@ -58,26 +58,27 @@ sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/to
 echo -e "\n\nCopy config file..."
 echo "=============================="
 
-echo "symlink gitcofig and gitignore_global to root directory"
+echo "symlink gitcofig and gitignore_global"
 ln -s -f ../git/.gitconfig ~/.gitconfig
 ln -s -f ../git/.gitignore_global ~/.gitignore_global
 
 echo "symlink inputrc config file"
 ln -s -f ..config/.inputrc ~/.inputrc
 
-echo "symlink neovim config to root directory"
+echo "symlink neovim config"
 if [ ! -d "~/.config/nvim" ]; then
   mkdir -p ~/.config/nvim
 fi
 ln -s -f ../config/nvim/init.vim ~/.config/nvim/init.vim
 
-echo "symlink zsh config to root directory"
+echo "symlink zsh config"
 ln -s -f ../zsh/.zshrc ~/.zshrc
 
-echo "symlink tmux config to root directory"
+echo "symlink tmux config"
 ln -s -f ../tmux/.tmux.conf ~/.tmux.conf
 
-echo "symlink tmux config environment to root directory"
+echo "symlink tmux config environment"
+# note: manually set excution permission for the following files
 ln -s -f ../tmux/dev_env ~/dev_env
 ln -s -f ../tmux/lixibox_env ~/lixibox_env
 
