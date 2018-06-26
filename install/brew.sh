@@ -58,26 +58,26 @@ sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/to
 echo -e "\n\nCopy config file..."
 echo "=============================="
 
-echo "copy gitcofig and gitignore_global to root directory"
-cp ../git/.gitconfig ~/
-cp ../git/.gitignore_global ~/
+echo "symlink gitcofig and gitignore_global to root directory"
+ln -s -f ../git/.gitconfig ~/.gitconfig
+ln -s -f ../git/.gitignore_global ~/.gitignore_global
 
-echo "copy inputrc config file"
-cp ..config/.inputrc ~/
+echo "symlink inputrc config file"
+ln -s -f ..config/.inputrc ~/.inputrc
 
-echo "copy neovim config to root directory"
+echo "symlink neovim config to root directory"
 if [ ! -d "~/.config/nvim" ]; then
   mkdir -p ~/.config/nvim
 fi
-cp ../config/nvim/init.vim ~/.config/nvim/
+ln -s -f ../config/nvim/init.vim ~/.config/nvim/init.vim
 
-echo "copy zsh config to root directory"
-cp ../zsh/.zshrc ~/
+echo "symlink zsh config to root directory"
+ln -s -f ../zsh/.zshrc ~/.zshrc
 
-echo "copy tmux config to root directory"
-cp ../tmux/.tmux.conf ~/
+echo "symlink tmux config to root directory"
+ln -s -f ../tmux/.tmux.conf ~/.tmux.conf
 
-echo "copy tmux config environment to root directory"
-cp ../tmux/general-dev ~/
-cp ../tmux/lixibox-dev ~/
+echo "symlink tmux config environment to root directory"
+ln -s -f ../tmux/dev_env ~/dev_env
+ln -s -f ../tmux/lixibox_env ~/lixibox_env
 
