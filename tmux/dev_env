@@ -1,26 +1,26 @@
-tmux has-session -t dev_env
+tmux has-session -t $1
 if [ $? != 0 ]
 then
 	#editor
 
-	tmux new-session -s dev_env -n editor -d
+	tmux new-session -s $1 -n editor -d
 
-	tmux split-window -v -l 12 -t dev_env # split vertical current window to 2 pane. `l` is length
-	tmux split-window -h -t dev_env:1.2 # split pane 2 of window 1 to 2 panes
-	tmux send-keys -t dev_env:1.1 'nvim' C-m # launch neovim in pane 1 of window 1
+	tmux split-window -v -l 12 -t $1 # split vertical current window to 2 pane. `l` is length
+	tmux split-window -h -t $1:1.2 # split pane 2 of window 1 to 2 panes
+	tmux send-keys -t $1:1.1 'nvim' C-m # launch neovim in pane 1 of window 1
 
 	# console and local server log
 
-	tmux new-window -n local -t dev_env
+	tmux new-window -n local -t $1
 
 	# server
-	tmux new-window -n server -t dev_env
-	tmux split-window -h -t dev_env
+	tmux new-window -n server -t $1
+	tmux split-window -h -t $1
 
 	# display first window of the session
 
-	tmux select-window -t dev_env:1
+	tmux select-window -t $1:1
 	tmux select-pane -t 1
 fi
-tmux attach -t dev_env
+tmux attach -t $1
 
