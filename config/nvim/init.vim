@@ -49,7 +49,7 @@ NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'christoomey/vim-tmux-navigator'                "  navigate seamlessly between vim and tmux splits
 NeoBundle 'majutsushi/tagbar'
-NeoBundle 'phongnh/vim-copypath'                          " copypath file name, file path
+NeoBundle 'vim-scripts/copypath.vim'                       " copy path and copy file name
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'rhysd/clever-f.vim'
 NeoBundle 'mileszs/ack.vim'
@@ -393,15 +393,11 @@ map <Leader>rv :RV<CR>
 
 
 " --------------------------------------------------------
-" vim-copypath
+" copypath
 " --------------------------------------------------------
-nnoremap <silent> yp :CopyRelativePath<CR>
-nnoremap <silent> yP :CopyRelativePath!<CR>
-nnoremap <silent> yu :CopyFullPath<CR>
-nnoremap <silent> yU :CopyFullPath!<CR>
-nnoremap <silent> yd :CopyParentPath<CR>
-nnoremap <silent> yD :CopyParentPath!<CR>
-
+let g:copypath_copy_to_unnamed_register = 1
+nnoremap <silent> yp :CopyPath<CR>
+nnoremap <silent> yfn :CopyFileName<CR>
 
 " --------------------------------------------------------
 " MAPPING MISC
