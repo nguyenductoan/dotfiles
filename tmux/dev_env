@@ -5,9 +5,10 @@ then
 
 	tmux new-session -s $1 -n editor -d
 
-	tmux split-window -v -l 12 -t $1 # split vertical current window to 2 pane. `l` is length
-	tmux split-window -h -t $1:1.2 # split pane 2 of window 1 to 2 panes
-	tmux send-keys -t $1:1.1 'nvim' C-m # launch neovim in pane 1 of window 1
+	tmux split-window -v -p 5 -t $1:1 # split vertical current window to 2 pane. `l` is length
+	tmux split-window -h -p 10 -t $1:1.1 # split vertical current window to 2 pane. `l` is length
+	/*tmux split-window -h -t $1:1.2 # split pane 2 of window 1 to 2 panes*/
+	/*tmux send-keys -t $1:1.1 'nvim' C-m # launch neovim in pane 1 of window 1*/
 
 	# console and local server log
 
@@ -16,6 +17,7 @@ then
 	# server
 	tmux new-window -n server -t $1
 	tmux split-window -h -t $1
+
 
 	# display first window of the session
 
