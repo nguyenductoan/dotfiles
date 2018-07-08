@@ -49,7 +49,7 @@ NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'christoomey/vim-tmux-navigator'                "  navigate seamlessly between vim and tmux splits
 NeoBundle 'majutsushi/tagbar'
-NeoBundle 'vim-scripts/copypath.vim'                       " copy path and copy file name
+"NeoBundle 'vim-scripts/copypath.vim'                       " copy path and copy file name
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'rhysd/clever-f.vim'
 NeoBundle 'mileszs/ack.vim'
@@ -223,6 +223,22 @@ map <leader>ba :bufdo bd<cr>
 nnoremap B ^
 nnoremap E $
 
+" copy current file name (relative/absolute) to system clipboard
+if has('mac') || has('gui_macvim') || has('gui_mac')
+  " relative path  (src/foo.txt)
+  nnoremap <silent> yp :let @*=expand("%")<CR>
+
+  " absolute path  (/something/src/foo.txt)
+  nnoremap <silent> yP :let @*=expand("%:p")<CR>
+
+  " filename       (foo.txt)
+  nnoremap <silent> yf :let @*=expand("%:t")<CR>
+
+  " directory name (/something/src)
+  nnoremap <silent>yd :let @*=expand("%:p:h")<CR>
+endif
+
+
 " --------------------------------------------------------
 " Vim Airline
 " --------------------------------------------------------
@@ -391,13 +407,6 @@ map <Leader>vv :Vview<SPACE>
 map <Leader>ev :Eview<CR>
 map <Leader>rv :RV<CR>
 
-
-" --------------------------------------------------------
-" copypath
-" --------------------------------------------------------
-let g:copypath_copy_to_unnamed_register = 1
-nnoremap <silent> yp :CopyPath<CR>
-nnoremap <silent> yfn :CopyFileName<CR>
 
 " --------------------------------------------------------
 " MAPPING MISC
