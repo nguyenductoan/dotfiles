@@ -14,8 +14,8 @@ if [ ! -d "~/.config/nvim" ]; then
 fi
 ln -s -f ~/works/dotfiles/config/nvim/init.vim ~/.config/nvim/init.vim
 
-echo "symlink zsh config"
-ln -s -f ~/works/dotfiles/zsh/.zshrc ~/.zshrc
+echo "copy zsh config"
+cp ~/works/dotfiles/zsh/.zshrc ~/
 
 echo "symlink tmux config"
 ln -s -f ~/works/dotfiles/tmux/.tmux.conf ~/.tmux.conf
