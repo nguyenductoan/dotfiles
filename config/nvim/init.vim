@@ -44,18 +44,19 @@ NeoBundle 'slim-template/vim-slim.git'
 NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 NeoBundle 'junegunn/fzf.vim'
 NeoBundle 'jiangmiao/auto-pairs'
-"NeoBundle 'ivalkeen/vim-ctrlp-tjump'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'christoomey/vim-tmux-navigator'                "  navigate seamlessly between vim and tmux splits
 NeoBundle 'majutsushi/tagbar'
-"NeoBundle 'vim-scripts/copypath.vim'                       " copy path and copy file name
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'rhysd/clever-f.vim'
 NeoBundle 'mileszs/ack.vim'
 NeoBundle 'Glench/Vim-Jinja2-Syntax'
 NeoBundle 'mattn/emmet-vim'                               " high speed coding for html and css
 NeoBundle 'wesQ3/vim-windowswap'                          " use to swap window
+NeoBundle 'ngmy/vim-rubocop'
+NeoBundle 'prettier/vim-prettier'
+NeoBundle 'w0rp/ale'
 
 
 call neobundle#end()
@@ -275,16 +276,6 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 " bind \ (backward slash) to grep shortcut
 command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 
-"nnoremap <Leader>f :Ag<SPACE>
-
-
-" --------------------------------------------------------
-" vim-ctrlp-tjump
-" --------------------------------------------------------
-
-"nnoremap <c-]> :CtrlPtjump<cr>
-"vnoremap <c-]> :CtrlPtjumpVisual<cr>
-
 
 " --------------------------------------------------------
 " Deoplete
@@ -310,8 +301,7 @@ noremap <Leader>gs :Gstatus<CR>
 noremap <Leader>gb :Gblame<CR>
 noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
-
-
+noremap <Leader>gw :GBrowse<CR>
 
 
 " --------------------------------------------------------
@@ -462,6 +452,40 @@ let g:clever_f_across_no_line = 1
 " vim-windowswap
 " --------------------------------------------------------
 nnoremap <silent> <leader>mm :call WindowSwap#EasyWindowSwap()<CR>
+
+
+" --------------------------------------------------------
+" vim-rubocop
+" --------------------------------------------------------
+let g:vimrubocop_config = '.rubocop.yml'
+let g:vimrubocop_keymap = 0
+nmap <Leader>r :RuboCop<CR>
+
+
+" --------------------------------------------------------
+" vim-prettier
+" --------------------------------------------------------
+let g:prettier#exec_cmd_path = '.prettierrc'
+nmap <Leader>pr :Prettier<CR>
+
+
+" --------------------------------------------------------
+" ALE
+" --------------------------------------------------------
+let g:ale_fixers = {
+\ 'ruby': ['rubocop']
+\ }
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\}
+
+let g:airline#extensions#ale#enabled = 1
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_set_highlights = 0
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
 
 
 " Super charged File finder
