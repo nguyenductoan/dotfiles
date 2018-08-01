@@ -53,10 +53,11 @@ NeoBundle 'rhysd/clever-f.vim'
 NeoBundle 'mileszs/ack.vim'
 NeoBundle 'Glench/Vim-Jinja2-Syntax'
 NeoBundle 'mattn/emmet-vim'                               " high speed coding for html and css
-NeoBundle 'wesQ3/vim-windowswap'                          " use to swap window
+"NeoBundle 'wesQ3/vim-windowswap'                          " use to swap window
 NeoBundle 'ngmy/vim-rubocop'
 NeoBundle 'prettier/vim-prettier'
 NeoBundle 'w0rp/ale'
+"NeoBundle 'eugen0329/vim-esearch'                         " search and replace like Sublime/Atom
 
 
 call neobundle#end()
@@ -98,7 +99,11 @@ set foldmethod=indent
 set foldlevelstart=20
 set wildmenu                                                " Turn on the WiLd menu
 set wildmode=longest:list,full
+set fillchars+=vert:\|                                       " Delete pipe characters on styling vertical split borders
+                                                            "(note the significant whitespace after the '\' character)
 
+
+hi VertSplit guibg=NONE cterm=NONE                          " Transparent background for split borders
 hi CursorLine term=bold cterm=bold guibg=Grey40<Paste>      " highlight line cursor
 highlight ColorColumn cterm=NONE ctermbg=0 ctermfg=NONE guibg=Grey40
 
@@ -301,7 +306,7 @@ noremap <Leader>gs :Gstatus<CR>
 noremap <Leader>gb :Gblame<CR>
 noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
-noremap <Leader>gw :GBrowse<CR>
+noremap <Leader>gw :Gbrowse<CR>
 
 
 " --------------------------------------------------------
@@ -488,6 +493,11 @@ let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 
 
+" --------------------------------------------------------
+" vim-esearch
+" --------------------------------------------------------
+
+
 " Super charged File finder
 " --------------------------------------------------------
 " FUNCTIONS
@@ -527,4 +537,20 @@ function! SearchInSpecificFolder()
   call fzf#vim#ag(keyword, { 'dir': current_dir . '/app/' . dir, 'down': '40%'})
 endfunction
 
+" Close all hidden buffers
+" https://gist.github.com/skanev/1068214
+command! CloseHiddenBuffers call s:CloseHiddenBuffers()
+function! s:CloseHiddenBuffers()
+  let open_buffers = []
+
+  for i in range(tabpagenr('$'))
+    call extend(open_buffers, tabpagebuflist(i + 1))
+  endfor
+
+  for num in range(1, bufnr("$") + 1)
+    if buflisted(num) && index(open_buffers, num) == -1
+      exec "bdelete ".num
+    endif
+  endfor
+endfunction
 
