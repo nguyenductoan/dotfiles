@@ -1,28 +1,32 @@
-tmux has-session -t $1
-if [ $? != 0 ]
+# get session_name as current directory name if params $1 is not present
+if [ -z "$1" ]
 then
-	#editor
-
-	tmux new-session -s $1 -n editor -d
-
-	tmux split-window -v -p 5 -t $1:1 # split vertical current window to 2 pane. `l` is length
-	tmux split-window -h -p 10 -t $1:1.1 # split vertical current window to 2 pane. `l` is length
-	/*tmux split-window -h -t $1:1.2 # split pane 2 of window 1 to 2 panes*/
-	/*tmux send-keys -t $1:1.1 'nvim' C-m # launch neovim in pane 1 of window 1*/
-
-	# console and local server log
-
-	tmux new-window -n local -t $1
-
-	# server
-	tmux new-window -n server -t $1
-	tmux split-window -h -t $1
-
-
-	# display first window of the session
-
-	tmux select-window -t $1:1
-	tmux select-pane -t 1
+    session_name=$(basename `pwd`)
+else
+    session_name=$1
 fi
-tmux attach -t $1
+
+tmux has-session -t $session_name
+if [ $? != 0 ] # check if session is already existed
+then
+
+  #editor
+  tmux new-session -s $session_name -n editor -d
+
+  tmux split-window -v -p 5 -t $session_name:1 # split vertical current window to 2 pane. `l` is length
+  tmux split-window -h -t $session_name:1.2 # split pane 2 of window 1 to 2 panes
+  tmux send-keys -t $session_name:1.1 'nvim' C-m # launch neovim in pane 1 of window 1
+
+  # console and local server log
+  tmux new-window -n local -t $session_name
+
+  # server
+  tmux new-window -n server -t $session_name
+  tmux split-window -h -t $session_name
+
+  # display first window of the session
+  tmux select-window -t $session_name:1
+  tmux select-pane -t $session_name
+fi
+tmux attach -t $session_name
 
