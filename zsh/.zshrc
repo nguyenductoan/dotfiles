@@ -85,3 +85,6 @@ autoload -U compinit && compinit
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# ref: http://www.gmarik.info/blog/2010/ctags-on-OSX/
+ctags=/usr/local/bin/ctags
