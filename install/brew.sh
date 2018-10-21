@@ -54,3 +54,6 @@ brew cask install java
 echo "installing Oh My Zsh via wget"
 sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 
+echo "alias ctags (ref: http://www.gmarik.info/blog/2010/ctags-on-OSX/)
+alias ctags="`brew --prefix`/bin/ctags"
+
