@@ -56,8 +56,9 @@ NeoBundle 'mattn/emmet-vim'                               " high speed coding fo
 "NeoBundle 'wesQ3/vim-windowswap'                          " use to swap window
 NeoBundle 'ngmy/vim-rubocop'
 NeoBundle 'prettier/vim-prettier'
-NeoBundle 'w0rp/ale'
+"NeoBundle 'w0rp/ale'
 "NeoBundle 'eugen0329/vim-esearch'                         " search and replace like Sublime/Atom
+NeoBundle 'mklabs/split-term.vim'
 
 
 call neobundle#end()
@@ -92,7 +93,7 @@ set autoread                                                " automatically read
 set backspace=indent,eol,start
 "set cursorline                                             " highlight current cursor line(performance issue)
 "set cursorcolumn
-set scrolloff=3                                             " lines of text around cursor
+set scrolloff=5                                             " lines of text around cursor
 set wrap                                                    " turn on line wrapping
 "set foldmethod=manual                                      " manual folding selected text
 set foldmethod=indent
@@ -101,6 +102,7 @@ set wildmenu                                                " Turn on the WiLd m
 set wildmode=longest:list,full
 set fillchars+=vert:\|                                       " Delete pipe characters on styling vertical split borders
                                                             "(note the significant whitespace after the '\' character)
+set timeoutlen=500 ttimeoutlen=0                           " timeoutlen is used for mapping delays, and ttimeoutlen is used for key code delays
 
 
 hi VertSplit guibg=NONE cterm=NONE                          " Transparent background for split borders
@@ -131,7 +133,8 @@ set list
 set listchars=tab:→\ ,eol:¬,trail:⋅,extends:❯,precedes:❮
 set showbreak=↪
 set clipboard=unnamed
-set splitright
+set splitright "split new window on the right of the current window
+set splitbelow  " split new win below the current window
 
 syntime on " user with ':syntime report' to tract performance
 "set ttyfast " use for slow terminal
@@ -160,7 +163,7 @@ let mapleader = "\<Space>"
 inoremap jk <esc>
 
 " toggle cursor line
-nnoremap <leader>lc :set cursorline!<cr>
+"nnoremap <leader>lc :set cursorline!<cr>
 
 " scroll the viewport faster
 nnoremap <C-e> 3<C-e>
@@ -229,6 +232,9 @@ map <leader>ba :bufdo bd<cr>
 nnoremap B ^
 nnoremap E $
 
+" Exit terminal
+:tnoremap jk <C-\><C-n>
+
 " copy current file name (relative/absolute) to system clipboard
 if has('mac') || has('gui_macvim') || has('gui_mac')
   " relative path  (src/foo.txt)
@@ -276,10 +282,10 @@ if executable('ag')
 endif
 
 " bind K to grep word under cursor
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+"nnoremap K :grep! '\b<C-R><C-W>\b'<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
-command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+"command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 
 
 " --------------------------------------------------------
@@ -354,10 +360,11 @@ let g:EasyMotion_do_mapping = 1                             " Disable default ma
 map / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
 "nmap <silent> <tab> <Plug>(easymotion-w)
-map <Leader>l <Plug>(easymotion-lineforward)
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
-map <Leader>h <Plug>(easymotion-linebackward)
+"map <Leader>l <Plug>(easymotion-lineforward)
+"map <Leader>j <Plug>(easymotion-j)
+"map <Leader>k <Plug>(easymotion-k)
+"map <Leader>h <Plug>(easymotion-linebackward)
+nmap <Leader>j <Plug>(easymotion-overwin-w)
 
 let g:EasyMotion_startofline = 0                            " keep cursor column when JK motion
 
@@ -411,6 +418,7 @@ map <silent> <leader>urt <ESC>:call Update_ruby_tags()<CR>
 map <silent> <leader>upt <ESC>:call Update_python_tags()<CR>
 map <C-c> "+y<CR>
 
+"map <leader>t :terminal<CR>
 
 " --------------------------------------------------------
 " MAPPING FZF
@@ -477,20 +485,20 @@ nmap <Leader>pr :Prettier<CR>
 " --------------------------------------------------------
 " ALE
 " --------------------------------------------------------
-let g:ale_fixers = {
-\ 'ruby': ['rubocop']
-\ }
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\}
+"let g:ale_fixers = {
+"\ 'ruby': ['rubocop']
+"\ }
+"let g:ale_linters = {
+"\   'javascript': ['eslint'],
+"\}
 
-let g:airline#extensions#ale#enabled = 1
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_set_highlights = 0
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
+"let g:airline#extensions#ale#enabled = 1
+"let g:ale_echo_msg_error_str = 'E'
+"let g:ale_echo_msg_warning_str = 'W'
+"let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+"let g:ale_set_highlights = 0
+"let g:ale_set_loclist = 0
+"let g:ale_set_quickfix = 1
 
 
 " --------------------------------------------------------
@@ -554,3 +562,33 @@ function! s:CloseHiddenBuffers()
   endfor
 endfunction
 
+" Toggle 'default' terminal
+map <silent>  <leader>ts :call ChooseTerm("term-slider", 1)<cr>
+" Start terminal in current pane
+map <silent>  <leader>t :call ChooseTerm("term-pane", 0)<cr>
+
+function! ChooseTerm(termname, slider)
+  let pane = bufwinnr(a:termname)
+  let buf = bufexists(a:termname)
+  if pane > 0
+    " pane is visible
+    if a:slider > 0
+      :exe pane . "wincmd c"
+    else
+      :exe "e #"
+    endif
+  elseif buf > 0
+    " buffer is not in pane
+    if a:slider
+      :exe "topleft split"
+    endif
+    :exe "buffer " . a:termname
+  else
+    " buffer is not loaded, create
+    if a:slider
+      :exe "topleft split"
+    endif
+    :terminal
+    :exe "f " a:termname
+  endif
+endfunction
