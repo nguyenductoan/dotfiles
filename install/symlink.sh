@@ -15,7 +15,10 @@ fi
 ln -s -f ~/works/dotfiles/config/nvim/init.vim ~/.config/nvim/init.vim
 
 echo "copy zsh config"
-cp ~/works/dotfiles/zsh/.zshrc ~/
+if [ ! -d "~/.env_variables" ]; then
+  cp -p ~/works/dotfiles/zsh/.env_variables ~/
+fi
+ln -s -f ~/works/dotfiles/zsh/.zshrc ~/.zshrc
 
 echo "symlink tmux config"
 ln -s -f ~/works/dotfiles/tmux/.tmux.conf ~/.tmux.conf
