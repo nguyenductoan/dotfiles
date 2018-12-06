@@ -3,6 +3,8 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/$USER/.oh-my-zsh
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -51,7 +53,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-completions vi-mode)
+plugins=(git tmux zsh-completions vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -86,5 +88,25 @@ autoload -U compinit && compinit
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# ref: http://www.gmarik.info/blog/2010/ctags-on-OSX/
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+
 ctags=/usr/local/bin/ctags
+export GPG_TTY=$(tty)
+export LANG=en_US.UTF-8
+
+# aliases
+alias heroku_pe='heroku accounts:set personal'
+alias heroku_eh='heroku accounts:set eh'
+
+alias herostag='hero $@ --context solomon.ehrocks.com'
+alias heroprod='hero $@ --context david.ehrocks.com'
+
+# include environment variables and secret_key
+if [ -f ~/.env_variables ]; then
+    source ~/.env_variables
+else
+    print "404: ~/.env_variables not found."
+fi
+
