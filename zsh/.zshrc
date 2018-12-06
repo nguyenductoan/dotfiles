@@ -53,10 +53,13 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux zsh-completions vi-mode)
+plugins=(git tmux zsh-completions vi-mode history-substring-search)
 
 source $ZSH/oh-my-zsh.sh
+# load zsh-auto-suggestions
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# load zsh-substring-search
+source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 autoload -U compinit && compinit
 
 # User configuration
@@ -110,3 +113,5 @@ else
     print "404: ~/.env_variables not found."
 fi
 
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down

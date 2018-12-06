@@ -21,6 +21,7 @@ formulas=(
     zsh
     zsh-completions
     zsh-autosuggestions
+    zsh-history-substring-search
     tmux
     reattach-to-user-namespace
     wget
