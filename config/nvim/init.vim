@@ -58,13 +58,12 @@ NeoBundle 'prettier/vim-prettier'
 "NeoBundle 'w0rp/ale'
 "NeoBundle 'eugen0329/vim-esearch'                         " search and replace like Sublime/Atom
 NeoBundle 'mklabs/split-term.vim'
-
+NeoBundle 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+NeoBundle 'neomake/neomake'
 
 call neobundle#end()
 
-
 filetype plugin indent on
-
 
 " If there are uninstalled bundles found on startup,
 " this will conveniently prompt you to install them.
@@ -128,9 +127,9 @@ syntax on
 syntax enable
 
 " toggle invisible characters
-set list
-set listchars=tab:→\ ,eol:¬,trail:⋅,extends:❯,precedes:❮
+set list lcs=tab:\.\ ,eol:¬,trail:⋅,extends:❯,precedes:❮
 set showbreak=↪
+
 set clipboard=unnamed
 set splitright "split new window on the right of the current window
 set splitbelow  " split new win below the current window
@@ -297,7 +296,6 @@ let g:deoplete#enable_at_startup = 1
 " deoplete tab-complete
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 
-
 " --------------------------------------------------------
 "" Fugitive
 " --------------------------------------------------------
@@ -319,7 +317,7 @@ noremap <Leader>gw :Gbrowse<CR>
 " indextLine
 " --------------------------------------------------------
 
-"let g:indentLine_enabled = 1
+let g:indentLine_enabled = 1
 
 
 " --------------------------------------------------------
@@ -500,6 +498,54 @@ nmap <Leader>pr :Prettier<CR>
 "let g:ale_set_loclist = 0
 "let g:ale_set_quickfix = 1
 
+
+" --------------------------------------------------------
+" neomake
+" --------------------------------------------------------
+au FileType go autocmd BufWritePost * Neomake
+let g:neomake_error_sign   = {'text': '✖', 'texthl': 'NeomakeErrorSign'}
+let g:neomake_warning_sign = {'text': '∆', 'texthl': 'NeomakeWarningSign'}
+let g:neomake_message_sign = {'text': '➤', 'texthl': 'NeomakeMessageSign'}
+let g:neomake_info_sign    = {'text': 'ℹ', 'texthl': 'NeomakeInfoSign'}
+let g:neomake_go_enabled_makers = [ 'go', 'gometalinter' ]
+let g:neomake_go_gometalinter_maker = {
+  \ 'args': [
+  \   '--tests',
+  \   '--enable-gc',
+  \   '--concurrency=3',
+  \   '--fast',
+  \   '-D', 'aligncheck',
+  \   '-D', 'dupl',
+  \   '-D', 'gocyclo',
+  \   '-D', 'gotype',
+  \   '-E', 'errcheck',
+  \   '-E', 'misspell',
+  \   '-E', 'unused',
+  \   '%:p:h',
+  \ ],
+  \ 'append_file': 0,
+  \ 'errorformat':
+  \   '%E%f:%l:%c:%trror: %m,' .
+  \   '%W%f:%l:%c:%tarning: %m,' .
+  \   '%E%f:%l::%trror: %m,' .
+  \   '%W%f:%l::%tarning: %m'
+\ }
+
+
+" --------------------------------------------------------
+" vim-go
+" --------------------------------------------------------
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+let g:go_fmt_autosave = 0
+let g:go_def_mode='godef'             " 'godef' will be faster than 'guru' (the default tool for jumping)
+nnoremap <leader>gob :GoBuild<cr>
 
 " --------------------------------------------------------
 " vim-esearch
