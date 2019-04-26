@@ -17,7 +17,6 @@ endif
 
 let g:ackprg = 'ag --nogroup --nocolor --column'
 "---------------------------------------
-
 call neobundle#begin(expand('$HOME/.config/nvim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
@@ -560,35 +559,4 @@ function! s:CloseHiddenBuffers()
       exec "bdelete ".num
     endif
   endfor
-endfunction
-
-" Toggle 'default' terminal
-map <silent>  <leader>ts :call ChooseTerm("term-slider", 1)<cr>
-" Start terminal in current pane
-map <silent>  <leader>t :call ChooseTerm("term-pane", 0)<cr>
-
-function! ChooseTerm(termname, slider)
-  let pane = bufwinnr(a:termname)
-  let buf = bufexists(a:termname)
-  if pane > 0
-    " pane is visible
-    if a:slider > 0
-      :exe pane . "wincmd c"
-    else
-      :exe "e #"
-    endif
-  elseif buf > 0
-    " buffer is not in pane
-    if a:slider
-      :exe "topleft split"
-    endif
-    :exe "buffer " . a:termname
-  else
-    " buffer is not loaded, create
-    if a:slider
-      :exe "topleft split"
-    endif
-    :terminal
-    :exe "f " a:termname
-  endif
 endfunction
