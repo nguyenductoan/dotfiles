@@ -53,7 +53,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux zsh-completions vi-mode history-substring-search)
+plugins=(git tmux zsh-completions vi-mode history-substring-search fzf docker-compose kubectl)
 
 source $ZSH/oh-my-zsh.sh
 # load zsh-auto-suggestions
@@ -98,6 +98,21 @@ export PATH="$PATH:$HOME/.rvm/bin"
 ctags=/usr/local/bin/ctags
 export GPG_TTY=$(tty)
 export LANG=en_US.UTF-8
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_COMPLETION_TRIGGER=''
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!{.git, node_modules}"'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+bindkey '^I' $fzf_default_completion
+bindkey '^T' fzf-completion
+
+# golang
+export GOPATH=$HOME/go-workspace # don't forget to change your path correctly!
+export GOROOT=/usr/local/opt/go/libexec
+export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:$GOROOT/bin
 
 # aliases
 alias heroku_pe='heroku accounts:set personal'
