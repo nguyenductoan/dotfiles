@@ -134,6 +134,7 @@ set showbreak=↪
 set clipboard=unnamed
 set splitright "split new window on the right of the current window
 set splitbelow  " split new win below the current window
+set bg=light    " from neovim version 0.3.2 the default background is 'dark'
 
 syntime on " user with ':syntime report' to tract performance
 "set ttyfast " use for slow terminal
