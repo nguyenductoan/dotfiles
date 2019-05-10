@@ -59,6 +59,8 @@ NeoBundle 'prettier/vim-prettier'
 "NeoBundle 'eugen0329/vim-esearch'                         " search and replace like Sublime/Atom
 NeoBundle 'mklabs/split-term.vim'
 NeoBundle 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+" using gocode from: https://github.com/mdempsky/gocode
+NeoBundle 'deoplete-plugins/deoplete-go', {'build': {'unix': 'make'}}
 NeoBundle 'neomake/neomake'
 
 call neobundle#end()
@@ -295,6 +297,8 @@ let g:deoplete#enable_at_startup = 1
 
 " deoplete tab-complete
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
+let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
 
 " --------------------------------------------------------
 "" Fugitive
@@ -504,7 +508,7 @@ nmap <Leader>pr :Prettier<CR>
 " --------------------------------------------------------
 au FileType go autocmd BufWritePost * Neomake
 let g:neomake_error_sign   = {'text': '✖', 'texthl': 'NeomakeErrorSign'}
-let g:neomake_warning_sign = {'text': '∆', 'texthl': 'NeomakeWarningSign'}
+let g:neomake_warning_sign = {'text': '∆', 'texthl': 'NeomakeErrorSign'}
 let g:neomake_message_sign = {'text': '➤', 'texthl': 'NeomakeMessageSign'}
 let g:neomake_info_sign    = {'text': 'ℹ', 'texthl': 'NeomakeInfoSign'}
 let g:neomake_go_enabled_makers = [ 'go', 'gometalinter' ]
