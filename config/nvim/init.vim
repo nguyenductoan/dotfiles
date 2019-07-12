@@ -62,6 +62,8 @@ NeoBundle 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 " using gocode from: https://github.com/mdempsky/gocode
 NeoBundle 'deoplete-plugins/deoplete-go', {'build': {'unix': 'make'}}
 NeoBundle 'neomake/neomake'
+" https://medium.com/@rohmanhakim/how-to-set-up-code-completion-for-vim-in-macos-9766dd459385
+NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout release' } }
 
 call neobundle#end()
 
@@ -487,12 +489,15 @@ nmap <Leader>pr :Prettier<CR>
 " --------------------------------------------------------
 " ALE
 " --------------------------------------------------------
-"let g:ale_fixers = {
-"\ 'ruby': ['rubocop']
-"\ }
 "let g:ale_linters = {
-"\   'javascript': ['eslint'],
+"\   'go': ['bingo', 'gotype', 'golint', 'golangci-lint'],
 "\}
+
+"let g:ale_fixers = {
+"\   'go': ['goimports', 'gofmt'],
+"\}
+
+"let g:ale_fix_on_save = 1
 
 "let g:airline#extensions#ale#enabled = 1
 "let g:ale_echo_msg_error_str = 'E'
@@ -502,54 +507,119 @@ nmap <Leader>pr :Prettier<CR>
 "let g:ale_set_loclist = 0
 "let g:ale_set_quickfix = 1
 
+" --------------------------------------------------------
+" coc
+" --------------------------------------------------------
+
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'cocstatus': 'coc#status'
+      \ },
+      \ }
+" Show all diagnostics
+autocmd FileType go nnoremap <silent> <leader>ge  :<C-u>CocList diagnostics<cr>
+" Find symbol of current document
+"autocmd FileType go nnoremap <silent> <leader>lo  :<C-u>CocList outline<cr>
+" Use U to show documentation in preview window
+autocmd FileType go nnoremap <silent> U :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+
+" Remap for rename current word
+autocmd FileType go nmap <leader>rn <Plug>(coc-rename)
+
+" Better display for messages
+set cmdheight=2
+
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+
+" always show signcolumns
+set signcolumn=yes
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " --------------------------------------------------------
 " neomake
 " --------------------------------------------------------
-au FileType go autocmd BufWritePost * Neomake
-let g:neomake_error_sign   = {'text': '✖', 'texthl': 'NeomakeErrorSign'}
-let g:neomake_warning_sign = {'text': '∆', 'texthl': 'NeomakeErrorSign'}
-let g:neomake_message_sign = {'text': '➤', 'texthl': 'NeomakeMessageSign'}
-let g:neomake_info_sign    = {'text': 'ℹ', 'texthl': 'NeomakeInfoSign'}
-let g:neomake_go_enabled_makers = [ 'go', 'gometalinter' ]
-let g:neomake_go_gometalinter_maker = {
-  \ 'args': [
-  \   '--tests',
-  \   '--enable-gc',
-  \   '--concurrency=3',
-  \   '--fast',
-  \   '-D', 'aligncheck',
-  \   '-D', 'dupl',
-  \   '-D', 'gocyclo',
-  \   '-D', 'gotype',
-  \   '-E', 'errcheck',
-  \   '-E', 'misspell',
-  \   '-E', 'unused',
-  \   '%:p:h',
-  \ ],
-  \ 'append_file': 0,
-  \ 'errorformat':
-  \   '%E%f:%l:%c:%trror: %m,' .
-  \   '%W%f:%l:%c:%tarning: %m,' .
-  \   '%E%f:%l::%trror: %m,' .
-  \   '%W%f:%l::%tarning: %m'
-\ }
 
+" enable neomake for linting
+"au FileType go autocmd BufWritePost * Neomake
+"let g:go_metalinter_command='golangci-lint'
+""let g:go_metalinter_autosave = 1
+"let g:go_metalinter_enabeld = ['deadcode', 'errcheck', 'gosimple', 'govet', 'golint', 'staticcheck', 'typecheck', 'unused', 'varcheck']
+"let g:go_list_type = 'quickfix'
+
+"let g:neomake_error_sign   = {'text': '✖', 'texthl': 'NeomakeErrorSign'}
+"let g:neomake_warning_sign = {'text': '∆', 'texthl': 'NeomakeErrorSign'}
+"let g:neomake_message_sign = {'text': '➤', 'texthl': 'NeomakeMessageSign'}
+"let g:neomake_info_sign    = {'text': 'ℹ', 'texthl': 'NeomakeInfoSign'}
+""let g:neomake_go_enabled_makers = [ 'golint', 'govet', 'go' ]
+"let g:neomake_go_enabled_makers = [ 'go', 'gometalinter' ]
+"let g:neomake_logfile = '/tmp/neomake.log'
+""let g:neomake_open_list = 2 " auto open error list
+"let g:neomake_go_gometalinter_maker = {
+	"\ 'args': [
+	"\   '--tests',
+	"\   '--enable-gc',
+	"\   '--concurrency=3',
+	"\   '--fast',
+	"\   '-D', 'aligncheck',
+	"\   '-D', 'dupl',
+	"\   '-D', 'gocyclo',
+	"\   '-D', 'gotype',
+	"\   '-E', 'errcheck',
+	"\   '-E', 'misspell',
+	"\   '-E', 'unused',
+	"\   '%:p:h',
+	"\ ],
+	"\ 'append_file': 0,
+	"\ 'errorformat':
+	"\   '%E%f:%l:%c:%trror: %m,' .
+	"\   '%W%f:%l:%c:%tarning: %m,' .
+	"\   '%E%f:%l::%trror: %m,' .
+	"\   '%W%f:%l::%tarning: %m'
+"\ }
+
+"nnoremap <leader>no :lopen<cr>
+"nnoremap <leader>nc :lclose<cr>
 
 " --------------------------------------------------------
 " vim-go
 " --------------------------------------------------------
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_types = 1
+"let g:go_highlight_build_constraints = 1
+"let g:go_highlight_extra_types = 1
+"let g:go_highlight_fields = 1
+"let g:go_highlight_functions = 1
+"let g:go_highlight_methods = 1
+"let g:go_highlight_operators = 1
+"let g:go_highlight_structs = 1
+"let g:go_highlight_types = 1
 let g:go_fmt_autosave = 0
 let g:go_def_mode='godef'             " 'godef' will be faster than 'guru' (the default tool for jumping)
+let g:go_fmt_fail_silently = 1
+" Show type information
+"let g:go_auto_type_info = 1
+
 nnoremap <leader>gob :GoBuild<cr>
+autocmd FileType go nnoremap <leader>gf :GoFmt<cr>
+autocmd FileType go nnoremap <leader>gi :GoImports<cr>
 
 " --------------------------------------------------------
 " vim-esearch
