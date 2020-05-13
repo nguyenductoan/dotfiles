@@ -43,27 +43,29 @@ NeoBundle 'ntpeters/vim-better-whitespace'
 NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 NeoBundle 'junegunn/fzf.vim'
 NeoBundle 'jiangmiao/auto-pairs'
-NeoBundle 'pangloss/vim-javascript'
+"NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'christoomey/vim-tmux-navigator'                "  navigate seamlessly between vim and tmux splits
-NeoBundle 'majutsushi/tagbar'
+"NeoBundle 'majutsushi/tagbar'
 "NeoBundle 'leafgarland/typescript-vim'
-NeoBundle 'rhysd/clever-f.vim'
+"NeoBundle 'rhysd/clever-f.vim'
 NeoBundle 'mileszs/ack.vim'
 NeoBundle 'Glench/Vim-Jinja2-Syntax'
-NeoBundle 'mattn/emmet-vim'                               " high speed coding for html and css
+"NeoBundle 'mattn/emmet-vim'                               " high speed coding for html and css
 "NeoBundle 'wesQ3/vim-windowswap'                          " use to swap window
 NeoBundle 'ngmy/vim-rubocop'
 NeoBundle 'prettier/vim-prettier'
 "NeoBundle 'w0rp/ale'
 "NeoBundle 'eugen0329/vim-esearch'                         " search and replace like Sublime/Atom
-NeoBundle 'mklabs/split-term.vim'
+"NeoBundle 'mklabs/split-term.vim'
 NeoBundle 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 " using gocode from: https://github.com/mdempsky/gocode
 NeoBundle 'deoplete-plugins/deoplete-go', {'build': {'unix': 'make'}}
 NeoBundle 'neomake/neomake'
 " https://medium.com/@rohmanhakim/how-to-set-up-code-completion-for-vim-in-macos-9766dd459385
 NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout release' } }
+NeoBundle 'JamshedVesuna/vim-markdown-preview'
+"NeoBundle 'wesQ3/vim-windowswap'
 
 call neobundle#end()
 
@@ -105,7 +107,8 @@ set wildmode=longest:list,full
 set fillchars+=vert:\|                                       " Delete pipe characters on styling vertical split borders
                                                             "(note the significant whitespace after the '\' character)
 set timeoutlen=500 ttimeoutlen=0                           " timeoutlen is used for mapping delays, and ttimeoutlen is used for key code delays
-
+set nopaste                                                " workaround for insert(paste) mode https://github.com/neovim/neovim/issues/7994
+set mmp=5000                                               " set max memmory pattern
 
 hi VertSplit guibg=NONE cterm=NONE                          " Transparent background for split borders
 hi CursorLine term=bold cterm=bold guibg=Grey40<Paste>      " highlight line cursor
