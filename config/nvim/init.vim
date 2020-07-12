@@ -36,36 +36,35 @@ NeoBundle 'vim-scripts/grep.vim'
 NeoBundle 'bronson/vim-trailing-whitespace'
 NeoBundle 'Yggdroot/indentLine'                          " look like it will cause performance issue
 NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'Shougo/deoplete.nvim'
+"NeoBundle 'Shougo/deoplete.nvim'
 NeoBundle 'easymotion/vim-easymotion'
 NeoBundle 'ntpeters/vim-better-whitespace'
 "NeoBundle 'slim-template/vim-slim.git'
 NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 NeoBundle 'junegunn/fzf.vim'
 NeoBundle 'jiangmiao/auto-pairs'
-"NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'christoomey/vim-tmux-navigator'                "  navigate seamlessly between vim and tmux splits
-"NeoBundle 'majutsushi/tagbar'
+NeoBundle 'majutsushi/tagbar'
 "NeoBundle 'leafgarland/typescript-vim'
-"NeoBundle 'rhysd/clever-f.vim'
+NeoBundle 'rhysd/clever-f.vim'
 NeoBundle 'mileszs/ack.vim'
 NeoBundle 'Glench/Vim-Jinja2-Syntax'
-"NeoBundle 'mattn/emmet-vim'                               " high speed coding for html and css
+NeoBundle 'mattn/emmet-vim'                               " high speed coding for html and css
 "NeoBundle 'wesQ3/vim-windowswap'                          " use to swap window
 NeoBundle 'ngmy/vim-rubocop'
 NeoBundle 'prettier/vim-prettier'
 "NeoBundle 'w0rp/ale'
 "NeoBundle 'eugen0329/vim-esearch'                         " search and replace like Sublime/Atom
-"NeoBundle 'mklabs/split-term.vim'
+NeoBundle 'mklabs/split-term.vim'
 NeoBundle 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 " using gocode from: https://github.com/mdempsky/gocode
 NeoBundle 'deoplete-plugins/deoplete-go', {'build': {'unix': 'make'}}
 NeoBundle 'neomake/neomake'
 " https://medium.com/@rohmanhakim/how-to-set-up-code-completion-for-vim-in-macos-9766dd459385
 NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout release' } }
-NeoBundle 'JamshedVesuna/vim-markdown-preview'
-"NeoBundle 'wesQ3/vim-windowswap'
+NeoBundle 'tpope/vim-obsession'
 
 call neobundle#end()
 
@@ -107,12 +106,13 @@ set wildmode=longest:list,full
 set fillchars+=vert:\|                                       " Delete pipe characters on styling vertical split borders
                                                             "(note the significant whitespace after the '\' character)
 set timeoutlen=500 ttimeoutlen=0                           " timeoutlen is used for mapping delays, and ttimeoutlen is used for key code delays
-set nopaste                                                " workaround for insert(paste) mode https://github.com/neovim/neovim/issues/7994
-set mmp=5000                                               " set max memmory pattern
+set clipboard=unnamedplus
+
 
 hi VertSplit guibg=NONE cterm=NONE                          " Transparent background for split borders
-hi CursorLine term=bold cterm=bold guibg=Grey40<Paste>      " highlight line cursor
+hi CursorLine term=bold cterm=bold guibg=Grey40             " highlight line cursor
 highlight ColorColumn cterm=NONE ctermbg=0 ctermfg=NONE guibg=Grey40
+hi SignColumn ctermbg=NONE                                  " set color for SignColumn (the column next to column of line number)
 
 au BufRead,BufNewFile *.hamlc set ft=haml                   " hamlc syntax highlighting
 
@@ -133,11 +133,16 @@ highlight SpecialKey guifg=#4a4a59
 syntax on
 syntax enable
 
+" Display filename in vim:
+set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\ %{v:servername}
+
 " toggle invisible characters
 set list lcs=tab:\.\ ,eol:¬,trail:⋅,extends:❯,precedes:❮
 set showbreak=↪
 
-set clipboard=unnamed
+" Make vim use the system clipboard:
+set clipboard^=unnamed,unnamedplus
+
 set splitright "split new window on the right of the current window
 set splitbelow  " split new win below the current window
 set bg=light    " from neovim version 0.3.2 the default background is 'dark'
@@ -162,6 +167,8 @@ set re=1
 " VIM MAPPING
 " --------------------------------------------------------
 
+"map <leader>t :terminal<CR>
+
 " remap leader
 let mapleader = "\<Space>"
 
@@ -183,14 +190,21 @@ nnoremap <C-y> 3<C-y>
 nnoremap <silent> <C-t> :tabnew<CR>
 
 " move between window
-nmap <C-j> <C-w>j
-nmap <C-k> <C-w>k
-nmap <C-l> <C-w>l
-if has('nvim')
-  map <BS> <C-W>h
-else
-  map <C-h> <C-w>h
-endif
+"nmap <C-j> <C-w>j
+"nmap <C-k> <C-w>k
+"nmap <Leader>o <C-w>l
+"if has('nvim')
+  "map <BS> <C-W>h
+"else
+  "map <C-h> <C-w>h
+"endif
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+"nnoremap <silent> {Previous-Mapping} :TmuxNavigatePrevious<cr>
 
 map <Leader>w :w<CR>                                        " Save file
 map <Leader>q :q<CR>                                        " Quit file
@@ -198,6 +212,7 @@ map <Leader>e :e<CR>                                        " Edit file
 "map <Leader>qa :qa<CR>                                      " quit all files (it will cause slow on <Leader>q mapping)
 "map <Silent><Leader>va <ESC>ggVG<CR>                        " Select all file
 map <C-s> <ESC>gg<S-v>G
+" C-q : visual block
 
 " copy and paste to system clipboard
 vmap <Leader>y "+y
@@ -241,20 +256,21 @@ nnoremap E $
 " Exit terminal
 :tnoremap jk <C-\><C-n>
 
-" copy current file name (relative/absolute) to system clipboard
-if has('mac') || has('gui_macvim') || has('gui_mac')
-  " relative path  (src/foo.txt)
-  nnoremap <silent> yp :let @*=expand("%")<CR>
+" copy current relative path (src/foo.txt) to system clipboard
+nnoremap <silent> yp :let @+=expand("%")<CR>
 
-  " absolute path  (/something/src/foo.txt)
-  nnoremap <silent> yP :let @*=expand("%:p")<CR>
+" copy current absolute path (/something/src/foo.txt) to system clipboard
+nnoremap <silent> yP :let @+=expand("%:p")<CR>
 
-  " filename       (foo.txt)
-  nnoremap <silent> yf :let @*=expand("%:t")<CR>
+" filename       (foo.txt)
+nnoremap <silent> yf :let @+=expand("%:t")<CR>
 
-  " directory name (/something/src)
-  nnoremap <silent>yd :let @*=expand("%:p:h")<CR>
-endif
+" directory name (/something/src)
+nnoremap <silent>yd :let @+=expand("%:p:h")<CR>
+
+map <silent> <leader>urt <ESC>:call Update_ruby_tags()<CR>
+map <silent> <leader>upt <ESC>:call Update_python_tags()<CR>
+map <C-c> "+y<CR>
 
 
 " --------------------------------------------------------
@@ -418,16 +434,6 @@ map <Leader>rv :RV<CR>
 
 
 " --------------------------------------------------------
-" MAPPING MISC
-" --------------------------------------------------------
-
-map <silent> <leader>urt <ESC>:call Update_ruby_tags()<CR>
-map <silent> <leader>upt <ESC>:call Update_python_tags()<CR>
-map <C-c> "+y<CR>
-
-"map <leader>t :terminal<CR>
-
-" --------------------------------------------------------
 " MAPPING FZF
 " --------------------------------------------------------
 
@@ -544,7 +550,7 @@ endfunction
 autocmd FileType go nmap <leader>rn <Plug>(coc-rename)
 
 " Better display for messages
-set cmdheight=2
+set cmdheight=1
 
 " Smaller updatetime for CursorHold & CursorHoldI
 set updatetime=300
@@ -552,7 +558,7 @@ set updatetime=300
 " don't give |ins-completion-menu| messages.
 set shortmess+=c
 
-" always show signcolumns
+" always show signcolumns (the column next to the line number column)
 set signcolumn=yes
 
 " Highlight symbol under cursor on CursorHold
