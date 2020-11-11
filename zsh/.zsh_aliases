@@ -1,0 +1,3 @@
+# EXAMPLE:
+# alias heroclilocal='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_LOCAL ~/works/eh/hero2/bin/herocli2 --server 0.0.0.0:5051 -k'
+

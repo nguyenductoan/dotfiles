@@ -2,9 +2,33 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/$USER/.oh-my-zsh
+# linux
+export ZSH=/home/$USER/.oh-my-zsh
+# macOS
+#export ZSH=/Users/$USER/.oh-my-zsh
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+export EDITOR="nvim"
+
+# history setting
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000000
+SAVEHIST=10000000
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt SHARE_HISTORY             # Share history between all sessions.
+#setopt BANG_HIST                 # Treat the '!' character specially during expansion.
+#setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
+#setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+#setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+#setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
+#setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+#setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+#setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
+#setopt HIST_BEEP                 # Beep when accessing nonexistent history.
+
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -53,13 +77,26 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux zsh-completions vi-mode history-substring-search fzf docker-compose kubectl)
+plugins=(git tmux zsh-completions vi-mode history-substring-search fzf docker-compose kubectl kube-ps1)
 
 source $ZSH/oh-my-zsh.sh
 # load zsh-auto-suggestions
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+ source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# load kube-ps1
+KUBE_PS1_SYMBOL_ENABLE=false
+#PROMPT=$PROMPT'$(kube_ps1)'
+
+# custom PROMPT
+NEWLINE=$'\n'
+local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
+PROMPT='%{$fg[green]%}%* |%{$fg[green]%}%p %{$fg[cyan]%}%c %{$fg[blue]%}$(git_prompt_info)%{$fg[blue]%}$(kube_ps1) ${NEWLINE}${ret_status} %{$reset_color%}'
+# precmd() { print "" }
+#RPROMPT=""
+
+ #source $ZSH/custom/plugins/kube-ps1/kube-ps1.sh
 # load zsh-substring-search
-source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+# source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 autoload -U compinit && compinit
 
 # User configuration
@@ -110,7 +147,8 @@ bindkey '^T' fzf-completion
 
 # golang
 export GOPATH=$HOME/go-workspace # don't forget to change your path correctly!
-export GOROOT=/usr/local/opt/go/libexec
+export GOROOT=/usr/local/go # libexec
+export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$GOROOT/bin
 
@@ -118,14 +156,18 @@ export PATH=$PATH:$GOROOT/bin
 alias heroku_pe='heroku accounts:set personal'
 alias heroku_eh='heroku accounts:set eh'
 
-alias herostag='hero $@ --context solomon.ehrocks.com'
-alias heroprod='hero $@ --context david.ehrocks.com'
-
 # include environment variables and secret_key
 if [ -f ~/.env_variables ]; then
     source ~/.env_variables
 else
     print "404: ~/.env_variables not found."
+fi
+
+# include aliases
+if [ -f ~/.zsh_aliases ]; then
+    source ~/.zsh_aliases
+else
+    print "404: ~/.zsh_aliases not found."
 fi
 
 bindkey -M vicmd 'k' history-substring-search-up
