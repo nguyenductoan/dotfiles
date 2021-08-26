@@ -64,6 +64,7 @@ NeoBundle 'deoplete-plugins/deoplete-go', {'build': {'unix': 'make'}}
 NeoBundle 'neomake/neomake'
 " https://medium.com/@rohmanhakim/how-to-set-up-code-completion-for-vim-in-macos-9766dd459385
 NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout release' } }
+NeoBundle 'neoclide/coc-highlight'
 NeoBundle 'tpope/vim-obsession'
 
 call neobundle#end()
@@ -624,6 +625,7 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 let g:go_fmt_autosave = 0
 let g:go_def_mode='godef'             " 'godef' will be faster than 'guru' (the default tool for jumping)
 let g:go_fmt_fail_silently = 1
+let g:go_gopls_enabled = 0
 " Show type information
 "let g:go_auto_type_info = 1
 
