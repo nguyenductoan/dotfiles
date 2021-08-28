@@ -1,0 +1,50 @@
+separator_block_width=14
+
+[disk]
+command=./disk
+LABEL= 
+#DIR=$HOME
+#ALERT_LOW=10
+interval=30
+
+[bandwidth3]
+command=./bandwidth3
+interval=persist
+markup=pango
+#LABEL=<span font='FontAwesome'>  </span>
+#IFACE=[automatically determined]
+#DT=3
+#UNIT=Mb
+# Exposed variables: rx, wx, tx, unit, iface
+#PRINTF_COMMAND=printf "${LABEL}%-5.1f/%5.1f %s/s\n", rx, wx, unit;
+color=#859900
+
+[ssid]
+command=./ssid
+LABEL= 
+#INTERFACE=wlan0
+interval=60
+
+[volume]
+command=./volume
+LABEL= 
+interval=5
+signal=10
+color=#1793D1
+
+[cpu_usage]
+command=./cpu_usage
+label=CPU 
+interval=10
+color=#cb4b16
+
+[memory]
+command=./memory
+label= 
+interval=30
+color=#b58900
+
+[time]
+command=date '+%A %d/%m/%Y %H:%M:%S'
+interval=1
+color=#859900
