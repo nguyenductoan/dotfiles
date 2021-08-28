@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+i3-dmenu-desktop --dmenu="rofi -show combi"
