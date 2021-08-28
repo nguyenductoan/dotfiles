@@ -190,6 +190,10 @@ bar {
   modifier $alt
 }
 
+# background image
+#feh --bg-scale ~/.config/i3/background.jpg
+exec_always --no-startup-id feh --bg-scale ~/.config/i3/background.jpg
+
 # Enable Print Screen
 #bindsym --release $mod+Print exec gnome-screenshot -i
 bindsym --release $mod+Print exec shutter -s
