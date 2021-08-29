@@ -33,8 +33,8 @@ exec --no-startup-id nm-applet
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
@@ -122,6 +122,11 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
+# Bind App to workspace
+assign [class="Firefox"] $ws2
+assign [class="Telegram"] $ws3
+assign [class="Slack"] $ws3
+
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
 bindsym $mod+2 workspace number $ws2
@@ -146,12 +151,25 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
+# switch between the current and the previously focused one
+bindsym $mod+b workspace back_and_forth
+bindsym $mod+Shift+b move container to workspace back_and_forth
+
+# move to next workspace
+bindsym $mod+i workspace next
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Toggle between hide state and show state
+bindsym $mod+m bar hidden_state toggle
+
+# Toggle between dock mode and hide mode
+bindsym $mod+n bar mode toggle
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -183,21 +201,37 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-  status_command i3status
+  #status_command i3status
+  status_command i3blocks
+  position top
+  font pango:Hack, FontAwesome 10
 
   mode hide
   hidden_state hide
-  modifier $alt
+  #modifier $alt
+
+  colors {
+    separator #268bd2
+    background #002b36
+    statusline #839496
+    focused_workspace #fdf6e3 #6c71c4 #fdf6e3
+    active_workspace #fdf6e3 #6c71c4 #fdf6e3
+    inactive_workspace #002b36 #586e75 #002b36
+    urgent_workspace #d33682 #d33682 #fdf6e3
+  }
 }
 
+# Sreen brightness controls
+# enable passwordless sudo for ybacklight. echo "koromicha ALL=NOPASSWD: /usr/bin/ybacklight" > /etc/sudoers.d/ybacklight
+#bindsym XF86MonBrightnessUp exec sudo ybacklight -inc 5 # increase screen brightness
+#bindsym XF86MonBrightnessDown exec sudo ybacklight -dec 5 # decrease screen brightness
+
 # background image
-#feh --bg-scale ~/.config/i3/background.jpg
 exec_always --no-startup-id feh --bg-scale ~/.config/i3/background.jpg
 
 # Enable Print Screen
 #bindsym --release $mod+Print exec gnome-screenshot -i
 bindsym --release $mod+Print exec shutter -s
-
 
 # Remap Caps Lock to CTRL
 exec --no-startup-id /usr/bin/setxkbmap -option "ctrl:nocaps"
@@ -208,9 +242,14 @@ exec --no-startup-id xset r rate 200 80
 # Start redshift
 exec --no-startup-id redshift
 
-# hide window title bar
-for_window [class=".*"] border pixel 0
-
 # start ibus daemon
 exec_always --no-startup-id ibus-daemon -d -r -x
 
+# start dropbox
+exec --no-startup-id dropbox start
+
+# enable floating mode for all dictionary windows
+#for_window [class="GoldenDic"] floating enable
+
+# hide window title bar
+for_window [class=".*"] border pixel 0
