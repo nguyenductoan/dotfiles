@@ -14,7 +14,7 @@ set $alt Mod1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+font pango:monospace 0
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -49,10 +49,13 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 #bindsym $mod+d exec dmenu_run
-bindsym $mod+space exec --no-startup-id ~/.config/i3/bin/rofi_app_launcher
+bindsym $mod+space exec --no-startup-id ~/.config/rofi/scripts/launcher.sh
+
+# start finder
+bindsym $mod+slash exec --no-startup-id ~/.config/i3/bin/rofifinder
 
 # Custom bindsyms
-bindsym $mod+p exec ~/.config/i3/bin/logout
+bindsym $mod+p exec ~/.config/rofi/scripts/powermenu.sh
 
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
@@ -123,9 +126,9 @@ set $ws9 "9"
 set $ws10 "10"
 
 # Bind App to workspace
-assign [class="Firefox"] $ws2
-assign [class="Telegram"] $ws3
-assign [class="Slack"] $ws3
+#assign [class="Firefox"] $ws1
+#assign [class="Telegram"] $ws1
+#assign [class="Slack"] $ws1
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -165,12 +168,6 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
-# Toggle between hide state and show state
-bindsym $mod+m bar hidden_state toggle
-
-# Toggle between dock mode and hide mode
-bindsym $mod+n bar mode toggle
-
 # resize window (you can also use the mouse for that)
 mode "resize" {
         # These bindings trigger as soon as you enter the resize mode
@@ -200,26 +197,34 @@ bindsym $mod+r mode "resize"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-  #status_command i3status
-  status_command i3blocks
-  position top
-  font pango:Hack, FontAwesome 10
+#bar {
+  ##status_command i3status
+  #status_command i3blocks
+  #position top
+  #font pango:Hack, FontAwesome 10
 
-  mode hide
-  hidden_state hide
-  #modifier $alt
+  #mode hide
+  #hidden_state hide
+  ##modifier $alt
 
-  colors {
-    separator #268bd2
-    background #002b36
-    statusline #839496
-    focused_workspace #fdf6e3 #6c71c4 #fdf6e3
-    active_workspace #fdf6e3 #6c71c4 #fdf6e3
-    inactive_workspace #002b36 #586e75 #002b36
-    urgent_workspace #d33682 #d33682 #fdf6e3
-  }
-}
+  #colors {
+    #separator #268bd2
+    #background #002b36
+    #statusline #839496
+    #focused_workspace #fdf6e3 #6c71c4 #fdf6e3
+    #active_workspace #fdf6e3 #6c71c4 #fdf6e3
+    #inactive_workspace #002b36 #586e75 #002b36
+    #urgent_workspace #d33682 #d33682 #fdf6e3
+  #}
+#}
+
+## Toggle between hide state and show state
+#bindsym $mod+m bar hidden_state toggle
+
+## Toggle between dock mode and hide mode
+#bindsym $mod+n bar mode toggle
+bindsym $mod+m exec "polybar-msg cmd toggle"
+
 
 # Sreen brightness controls
 # enable passwordless sudo for ybacklight. echo "koromicha ALL=NOPASSWD: /usr/bin/ybacklight" > /etc/sudoers.d/ybacklight
@@ -243,13 +248,28 @@ exec --no-startup-id xset r rate 200 80
 exec --no-startup-id redshift
 
 # start ibus daemon
-exec_always --no-startup-id ibus-daemon -d -r -x
+exec --no-startup-id ibus-daemon -d -r -x
 
 # start dropbox
 exec --no-startup-id dropbox start
+
+# start dropbox
+exec --no-startup-id "polybar main --config=~/.config/polybar/config"
+
+# Show only windows in current workspace
+bindsym $mod+o exec "rofi -show windowcd -theme ~/.config/rofi/themes/launcher.rasi"
+# Show windows in all workspaces
+#bindsym $mod+e exec "rofi -show window"
 
 # enable floating mode for all dictionary windows
 #for_window [class="GoldenDic"] floating enable
 
 # hide window title bar
 for_window [class=".*"] border pixel 0
+
+# default layout
+workspace_layout tabbed
+
+# Window borders to pixel 1
+new_window pixel 0
+new_float pixel 0
