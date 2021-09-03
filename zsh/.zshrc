@@ -79,6 +79,9 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git tmux zsh-completions vi-mode history-substring-search fzf docker-compose kubectl kube-ps1)
 
+# rust
+source $HOME/.cargo/env
+
 source $ZSH/oh-my-zsh.sh
 # load zsh-auto-suggestions
  source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -144,6 +147,9 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!{.
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 bindkey '^I' $fzf_default_completion
 bindkey '^T' fzf-completion
+
+#ta-lib
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # golang
 export GOPATH=$HOME/go-workspace # don't forget to change your path correctly!
