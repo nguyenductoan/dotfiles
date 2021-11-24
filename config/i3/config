@@ -126,9 +126,11 @@ set $ws9 "9"
 set $ws10 "10"
 
 # Bind App to workspace
-#assign [class="Firefox"] $ws1
-#assign [class="Telegram"] $ws1
-#assign [class="Slack"] $ws1
+assign [class="Firefox"] $ws1
+assign [class="Telegram"] $ws2
+assign [class="Slack"] $ws3
+assign [class="privateinternetaccess"] $ws5
+assign [class="GoldenDict"] $ws5
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -225,7 +227,6 @@ bindsym $mod+r mode "resize"
 #bindsym $mod+n bar mode toggle
 bindsym $mod+m exec "polybar-msg cmd toggle"
 
-
 # Sreen brightness controls
 # enable passwordless sudo for ybacklight. echo "koromicha ALL=NOPASSWD: /usr/bin/ybacklight" > /etc/sudoers.d/ybacklight
 #bindsym XF86MonBrightnessUp exec sudo ybacklight -inc 5 # increase screen brightness
@@ -236,7 +237,8 @@ exec_always --no-startup-id feh --bg-scale ~/.config/i3/background.jpg
 
 # Enable Print Screen
 #bindsym --release $mod+Print exec gnome-screenshot -i
-bindsym --release $mod+Print exec shutter -s
+#bindsym --release $mod+Print exec shutter -s
+bindsym --release $mod+Print exec "scrot -s -f -e 'xclip -i $f -selection clipboard -t image/png' ~/Pictures/screenshot-%Y-%m-%d_$wx$h.png"
 
 # Remap Caps Lock to CTRL
 exec --no-startup-id /usr/bin/setxkbmap -option "ctrl:nocaps"
@@ -253,13 +255,13 @@ exec --no-startup-id ibus-daemon -d -r -x
 # start dropbox
 exec --no-startup-id dropbox start
 
-# start dropbox
+# start polybar
 exec --no-startup-id "polybar main --config=~/.config/polybar/config"
 
 # Show only windows in current workspace
-bindsym $mod+o exec "rofi -show windowcd -theme ~/.config/rofi/themes/launcher.rasi"
+#bindsym $mod+o exec "rofi -show windowcd -theme ~/.config/rofi/themes/launcher.rasi"
 # Show windows in all workspaces
-#bindsym $mod+e exec "rofi -show window"
+bindsym $mod+o exec "rofi -show window -theme ~/.config/rofi/themes/launcher.rasi"
 
 # enable floating mode for all dictionary windows
 #for_window [class="GoldenDic"] floating enable
@@ -268,7 +270,7 @@ bindsym $mod+o exec "rofi -show windowcd -theme ~/.config/rofi/themes/launcher.r
 for_window [class=".*"] border pixel 0
 
 # default layout
-workspace_layout tabbed
+#workspace_layout tabbed
 
 # Window borders to pixel 1
 new_window pixel 0

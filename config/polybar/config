@@ -57,11 +57,11 @@ font-2 = "feather:size=12;3"
 
 modules-left = launcher i3
 modules-center = polywins
-modules-right = filesystem_bar sep pulseaudio sep memory_bar sep cpu_bar sep date sep sysmenu
+modules-right = wireless-network filesystem_bar sep pulseaudio sep memory_bar sep cpu_bar sep date sep sysmenu
 
-;tray-position = right
-;tray-padding = 2
-;tray-background = #0063ff
+tray-position = right
+tray-padding = 2
+tray-background = ${colors.background}
 
 ;wm-restack = generic
 ;wm-restack = bspwm
