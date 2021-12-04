@@ -246,6 +246,12 @@ exec --no-startup-id /usr/bin/setxkbmap -option "ctrl:nocaps"
 # Configura keyboard repeat speed
 exec --no-startup-id xset r rate 200 80
 
+# Configura keyboard repeat speed
+exec --no-startup-id xset s 1800 # enable the screen saver only after 30 minutes
+exec --no-startup-id xset dpms 0 0 1800 # turn off the monitor after 30 minutes of idling
+# exec --no-startup-id xset s off # disable the screen saver
+# exec --no-startup-id xset -dpms # turn off power saving
+
 # Start redshift
 exec --no-startup-id redshift
 
