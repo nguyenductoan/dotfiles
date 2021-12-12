@@ -66,6 +66,7 @@ NeoBundle 'neomake/neomake'
 NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout release' } }
 NeoBundle 'neoclide/coc-highlight'
 NeoBundle 'tpope/vim-obsession'
+NeoBundle 'tomlion/vim-solidity'
 
 call neobundle#end()
 
