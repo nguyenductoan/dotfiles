@@ -126,10 +126,11 @@ set $ws9 "9"
 set $ws10 "10"
 
 # Bind App to workspace
-assign [class="Firefox"] $ws1
-assign [class="Telegram"] $ws2
-assign [class="Slack"] $ws3
-assign [class="privateinternetaccess"] $ws5
+assign [class="privateinternetaccess"] $ws1
+assign [class="Firefox Simple"] $ws1
+assign [class="Firefox"] $ws2
+assign [class="Telegram"] $ws3
+assign [class="Slack"] $ws4
 assign [class="GoldenDict"] $ws5
 
 # switch to workspace
