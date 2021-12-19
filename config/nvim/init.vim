@@ -165,7 +165,11 @@ au FocusGained,BufEnter * :silent! !
 " disable beep sound
 set noeb vb t_vb=
 
-set re=1
+" set regex engine (:help 're')
+" 0: automatic selection
+" 1: old regex engine (FATER for ruby file but Vim could hang on a combination of a complex pattern with long text)
+" 2: NFA engine
+set re=0
 " --------------------------------------------------------
 " VIM MAPPING
 " --------------------------------------------------------
