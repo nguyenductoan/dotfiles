@@ -167,7 +167,7 @@ set noeb vb t_vb=
 
 " set regex engine (:help 're')
 " 0: automatic selection
-" 1: old regex engine (FATER for ruby file but Vim could hang on a combination of a complex pattern with long text)
+" 1: old regex engine (FATER for ruby file but Vim could hang on a combination of a complex pattern with long text. Eg: hexadecimal number)
 " 2: NFA engine
 set re=0
 " --------------------------------------------------------
