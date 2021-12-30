@@ -126,8 +126,8 @@ set $ws9 "9"
 set $ws10 "10"
 
 # Bind App to workspace
-assign [class="privateinternetaccess"] $ws1
-assign [class="Firefox Simple"] $ws1
+#assign [class="privateinternetaccess"] $ws1
+assign [class="FirefoxSimple"] $ws1
 assign [class="Firefox"] $ws2
 assign [class="Telegram"] $ws3
 assign [class="Slack"] $ws4
