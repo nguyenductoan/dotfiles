@@ -2,8 +2,16 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
+# What OS are we running?
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  export ZSH=/home/$USER/.oh-my-zsh
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  export ZSH=/Users/$USER/.oh-my-zsh
+else
+    echo 'Unknown OS!'
+fi
 # linux
-export ZSH=/home/$USER/.oh-my-zsh
+#export ZSH=/home/$USER/.oh-my-zsh
 # macOS
 #export ZSH=/Users/$USER/.oh-my-zsh
 
@@ -84,7 +92,10 @@ source $HOME/.cargo/env
 
 source $ZSH/oh-my-zsh.sh
 # load zsh-auto-suggestions
- source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+source $ZSH/custom/plugins/kube-ps1/kube-ps1.sh
+
 
 # load kube-ps1
 KUBE_PS1_SYMBOL_ENABLE=false
@@ -97,7 +108,6 @@ PROMPT='%{$fg[green]%}%* |%{$fg[green]%}%p %{$fg[cyan]%}%c %{$fg[blue]%}$(git_pr
 # precmd() { print "" }
 #RPROMPT=""
 
- #source $ZSH/custom/plugins/kube-ps1/kube-ps1.sh
 # load zsh-substring-search
 # source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 autoload -U compinit && compinit
