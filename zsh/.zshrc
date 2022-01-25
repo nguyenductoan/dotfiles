@@ -37,6 +37,15 @@ setopt SHARE_HISTORY             # Share history between all sessions.
 #setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 #setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
+export GTK_IM_MODULE=ibus
+export QT_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+# Dành cho những phần mềm dựa trên qt4
+export QT4_IM_MODULE=ibus
+# Dành cho những phần mềm dùng thư viện đồ họa clutter/OpenGL
+export CLUTTER_IM_MODULE=ibus
+export GLFW_IM_MODULE=ibus
+
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -88,7 +97,7 @@ ZSH_THEME="robbyrussell"
 plugins=(git tmux zsh-completions vi-mode history-substring-search fzf docker-compose kubectl kube-ps1)
 
 # rust
-source $HOME/.cargo/env
+#source $HOME/.cargo/env
 
 source $ZSH/oh-my-zsh.sh
 # load zsh-auto-suggestions
@@ -143,6 +152,8 @@ autoload -U compinit && compinit
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
+# add ".local/bin" to load path
+export PATH="$PATH:$HOME/.local/bin"
 
 
 ctags=/usr/local/bin/ctags
@@ -188,3 +199,4 @@ fi
 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

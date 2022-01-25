@@ -66,6 +66,7 @@ NeoBundle 'neomake/neomake'
 NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout release' } }
 NeoBundle 'neoclide/coc-highlight'
 NeoBundle 'tpope/vim-obsession'
+NeoBundle 'tomlion/vim-solidity'
 
 call neobundle#end()
 
@@ -164,7 +165,11 @@ au FocusGained,BufEnter * :silent! !
 " disable beep sound
 set noeb vb t_vb=
 
-set re=1
+" set regex engine (:help 're')
+" 0: automatic selection
+" 1: old regex engine (FATER for ruby file but Vim could hang on a combination of a complex pattern with long text. Eg: hexadecimal number)
+" 2: NFA engine
+set re=0
 " --------------------------------------------------------
 " VIM MAPPING
 " --------------------------------------------------------
@@ -337,7 +342,7 @@ noremap <Leader>gs :Gstatus<CR>
 noremap <Leader>gb :Git blame<CR>
 noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
-noremap <Leader>gw :Gbrowse<CR>
+noremap <Leader>gw :GBrowse<CR>
 
 
 " --------------------------------------------------------

@@ -1,0 +1,52 @@
+[Desktop Entry]
+Version=1.0
+Name=Firefox Web Browser
+Name[vi]=Trình duyệt web Firefox
+Comment=Browse the World Wide Web
+Comment[vi]=Để duyệt các trang web
+GenericName=Web Browser
+GenericName[vi]=Trình duyệt Web
+Keywords=Internet;WWW;Browser;Web;Explorer
+Keywords[vi]=Internet;WWW;Browser;Web;Explorer;Trình duyệt;Trang web
+Exec=firefox %u
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=firefox
+Categories=GNOME;GTK;Network;WebBrowser;
+StartupNotify=true
+Actions=new-window;new-private-window;Personal;Work;Secure;ProfileManager;
+
+[Desktop Action new-window]
+Name=Open a New Window
+Name[vi]=Mở cửa sổ mới
+Exec=firefox -new-window
+
+[Desktop Action new-private-window]
+Name=Open a New Private Window
+Exec=firefox -private-window
+
+[Desktop Action Personal]
+Name=Run Firefox with Personal profile
+Name[de]=Firefox mit Profile 1 starten
+Exec=firefox -P Personal -no-remote
+OnlyShowIn=Unity;
+
+[Desktop Action Work]
+Name=Run Firefox with Work profile
+Name[de]=Firefox mit Profile 2 starten
+Exec=firefox -P Work -no-remote
+OnlyShowIn=Unity;
+
+[Desktop Action Secure]
+Name=Run Firefox with Secure profile
+Name[de]=Firefox mit Profile 3 starten
+Exec=firefox -P Secure -no-remote
+OnlyShowIn=Unity;
+
+[Desktop Action ProfileManager]
+Name=Run Firefox with ProfileManager profile
+Name[de]=Firefox mit ProfileManager 3 starten
+Exec=firefox -P ProfileManager -no-remote
+OnlyShowIn=Unity;
+MimeType=x-scheme-handler/unknown;text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
