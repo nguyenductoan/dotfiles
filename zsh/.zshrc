@@ -4,19 +4,31 @@
 # Path to your oh-my-zsh installation.
 # What OS are we running?
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  # zsh
   export ZSH=/home/$USER/.oh-my-zsh
+
+  # NVM
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 elif [[ "$OSTYPE" == "darwin"* ]]; then
+  # zsh
   export ZSH=/Users/$USER/.oh-my-zsh
+
+  # hoembrew
+  export PATH=/opt/homebrew/bin:$PATH
+
+  # tools build by python3
+  export PATH=/Users/$USER/Library/Python/3.8/bin:$PATH
+
+  # nvm
+  export NVM_DIR=~/.nvm
+  source $(brew --prefix nvm)/nvm.sh
 else
     echo 'Unknown OS!'
 fi
-# linux
-#export ZSH=/home/$USER/.oh-my-zsh
-# macOS
-#export ZSH=/Users/$USER/.oh-my-zsh
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# set default editor
 export EDITOR="nvim"
 
 # history setting
