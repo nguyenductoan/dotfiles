@@ -571,6 +571,8 @@ set signcolumn=yes
 " Highlight symbol under cursor on CursorHold
 "autocmd CursorHold * silent call CocActionAsync('highlight')
 
+"let g:coc_global_extensions = ['coc-solargraph']
+
 " --------------------------------------------------------
 " neomake
 " --------------------------------------------------------
