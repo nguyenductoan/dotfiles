@@ -20,9 +20,9 @@
   old = red bold
   new = green bold
 [color "status"]
-  added = yellow
-  changed = green
-  untracked = cyan
+  added = green
+  changed = red
+  untracked = yellow
 
 # Use `origin` as the default remote on the `master` branch in all cases
 [branch "master"]

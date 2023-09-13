@@ -129,6 +129,11 @@ PROMPT='%{$fg[green]%}%* |%{$fg[green]%}%p %{$fg[cyan]%}%c %{$fg[blue]%}$(git_pr
 # precmd() { print "" }
 #RPROMPT=""
 
+
+## KEYCHAIN
+/usr/bin/keychain $HOME/.ssh/personal_id_rsa
+source $HOME/.keychain/$(hostname)-sh
+
 # load zsh-substring-search
 # source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 autoload -U compinit && compinit
@@ -212,3 +217,25 @@ fi
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/ndt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/ndt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/ndt/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/ndt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/ndt/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/ndt/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/ndt/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/ndt/Downloads/google-cloud-sdk/completion.zsh.inc'; fi

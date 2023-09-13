@@ -234,7 +234,7 @@ bindsym $mod+m exec "polybar-msg cmd toggle"
 #bindsym XF86MonBrightnessDown exec sudo ybacklight -dec 5 # decrease screen brightness
 
 # background image
-exec_always --no-startup-id feh --bg-scale ~/.config/i3/background.jpg
+exec_always --no-startup-id feh --bg-fill ~/.config/i3/wallpaper_1.jpg
 
 # Enable Print Screen
 #bindsym --release $mod+Print exec gnome-screenshot -i
@@ -242,10 +242,13 @@ exec_always --no-startup-id feh --bg-scale ~/.config/i3/background.jpg
 bindsym --release $mod+Print exec "scrot -s -f -e 'xclip -i $f -selection clipboard -t image/png' ~/Pictures/screenshot-%Y-%m-%d_$wx$h.png"
 
 # Remap Caps Lock to CTRL
-exec --no-startup-id /usr/bin/setxkbmap -option "ctrl:nocaps"
+exec_always --no-startup-id /usr/bin/setxkbmap -option "ctrl:nocaps"
 
 # Configura keyboard repeat speed
-exec --no-startup-id xset r rate 200 80
+exec_always --no-startup-id xset r rate 200 80
+
+# set resolution of HDMI to QHD
+exec_always --no-startup-id xrandr --output HDMI-0 --mode 2560x1440
 
 # Configura keyboard repeat speed
 exec --no-startup-id xset s 1800 # enable the screen saver only after 30 minutes
