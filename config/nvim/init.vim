@@ -36,7 +36,7 @@ NeoBundle 'vim-scripts/grep.vim'
 NeoBundle 'bronson/vim-trailing-whitespace'
 NeoBundle 'Yggdroot/indentLine'                          " look like it will cause performance issue
 NeoBundle 'kchmck/vim-coffee-script'
-"NeoBundle 'Shougo/deoplete.nvim'
+NeoBundle 'Shougo/deoplete.nvim'
 NeoBundle 'easymotion/vim-easymotion'
 NeoBundle 'ntpeters/vim-better-whitespace'
 "NeoBundle 'slim-template/vim-slim.git'
@@ -60,7 +60,7 @@ NeoBundle 'prettier/vim-prettier'
 NeoBundle 'mklabs/split-term.vim'
 NeoBundle 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 " using gocode from: https://github.com/mdempsky/gocode
-NeoBundle 'deoplete-plugins/deoplete-go', {'build': {'unix': 'make'}}
+"NeoBundle 'deoplete-plugins/deoplete-go', {'build': {'unix': 'make'}}
 NeoBundle 'neomake/neomake'
 " https://medium.com/@rohmanhakim/how-to-set-up-code-completion-for-vim-in-macos-9766dd459385
 NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout release' } }
@@ -324,7 +324,13 @@ endif
 let g:deoplete#enable_at_startup = 1
 
 " deoplete tab-complete
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+"inoremap <expr> <tab> pumvisible() ? "\<c-n>" : "\<tab>"
+inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<c-n>"
+inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<c-p>"
+
+" enter to chose
+inoremap <expr> <CR> pumvisible() ? '<C-Y>' : '<CR>'
+
 let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
 let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
 
