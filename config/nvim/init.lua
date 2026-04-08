@@ -66,8 +66,34 @@ require("lazy").setup({
   "vim-airline/vim-airline-themes",
 
   -- Fuzzy finder
-  { "junegunn/fzf", dir = "~/.fzf", build = "./install --all" },
-  "junegunn/fzf.vim",
+  {
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("fzf-lua").setup({
+        winopts = {
+          width  = 0.95,
+          height = 0.85,
+          row    = 0.5,
+          preview = {
+            layout     = "horizontal",
+            horizontal = "right:50%",
+          },
+        },
+        files = {
+          formatter  = "path.filename_first",
+          git_icons  = true,
+          fd_opts    = "--color=never --type f --hidden --follow --exclude .git",
+        },
+        grep = {
+          rg_opts    = "--column --line-number --no-heading --color=always --smart-case --hidden --glob '!.git'",
+          actions    = {
+            ["ctrl-q"] = { require("fzf-lua.actions").file_sel_to_qf, require("fzf-lua.actions").file_edit },
+          },
+        },
+      })
+    end,
+  },
 
   -- Search
   "vim-scripts/grep.vim",
@@ -420,13 +446,13 @@ map("", "<Leader>vv", ":Vview ")
 map("", "<Leader>ev", ":Eview<CR>")
 map("", "<Leader>rv", ":RV<CR>")
 
--- FZF
-vim.g.fzf_buffers_jump   = 1
-vim.g.fzf_layout         = { window = { width = 0.95, height = 0.85, yoffset = 0.5 } }
-map("", "<leader>ff", "<ESC>:call SearchByFileName()<CR>")
-map("", "<leader>fg", "<ESC>:call SearchByKeyWordInAllFolders()<CR>")
-map("", "<leader>fd", "<ESC>:call SearchInSpecificFolder()<CR>")
-map("", "<leader>fb", ":Buffers<CR>")
+-- FZF-lua
+map("n", "<leader>ff", "<cmd>lua require('fzf-lua').files()<CR>",                  { silent = true, desc = "Find files" })
+map("n", "<leader>fg", "<cmd>lua require('fzf-lua').live_grep()<CR>",              { silent = true, desc = "Live grep" })
+map("n", "<leader>fd", "<cmd>lua require('fzf-lua').live_grep_glob()<CR>",         { silent = true, desc = "Live grep (glob filter)" })
+map("n", "<leader>fb", "<cmd>lua require('fzf-lua').buffers()<CR>",                { silent = true, desc = "Buffers" })
+map("n", "<leader>fw", "<cmd>lua require('fzf-lua').grep_cword()<CR>",             { silent = true, desc = "Grep word under cursor" })
+map("n", "<leader>fr", "<cmd>lua require('fzf-lua').resume()<CR>",                 { silent = true, desc = "Resume last search" })
 
 -- Clever-f
 vim.g.clever_f_across_no_line = 1
@@ -489,30 +515,6 @@ vim.cmd([[
 
   function! Update_python_tags()
     return system('ctags -R --fields=+l --languages=python')
-  endfunction
-
-  function! SearchByFileName()
-    call fzf#vim#files('.', fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}))
-  endfunction
-
-  function! SearchByKeyWordInAllFolders()
-    let l:rg_cmd = 'rg --column --line-number --no-heading --color=always --smart-case --hidden --glob "!.git" -- %s || true'
-    let l:initial = printf(l:rg_cmd, '""')
-    let l:reload  = printf(l:rg_cmd, '{q}')
-    call fzf#vim#grep(l:initial, 1, fzf#vim#with_preview({
-    \   'options': ['--phony', '--query', '', '--bind', 'change:reload:'.l:reload,
-    \               '--layout=reverse', '--info=inline']
-    \ }))
-  endfunction
-
-  function! SearchInSpecificFolder()
-    let dir = input('Enter folder to search: ')
-    call inputrestore()
-    call inputsave()
-    let keyword = input('Enter keyword to search: ')
-    call inputrestore()
-    let current_dir = getcwd()
-    call fzf#vim#ag(keyword, {'dir': current_dir . '/app/' . dir, 'down': '40%'})
   endfunction
 
   function! s:buflist()
