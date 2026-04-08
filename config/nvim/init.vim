@@ -14,7 +14,6 @@ if !filereadable(neobundle_readme)
   silent !git clone https://github.com/Shougo/neobundle.vim ~/.config/nvim/bundle/neobundle.vim/
   let g:not_finsh_neobundle = "yes"
 endif
-
 let g:ackprg = 'ag --nogroup --nocolor --column'
 "---------------------------------------
 call neobundle#begin(expand('$HOME/.config/nvim/bundle'))
@@ -67,6 +66,13 @@ NeoBundle 'neoclide/coc.nvim', 'release', { 'build': { 'others': 'git checkout r
 NeoBundle 'neoclide/coc-highlight'
 NeoBundle 'tpope/vim-obsession'
 NeoBundle 'tomlion/vim-solidity'
+NeoBundle 'hashivim/vim-terraform'
+NeoBundle 'github/copilot.vim'
+NeoBundle 'nvim-lua/plenary.nvim'
+NeoBundle 'CopilotC-Nvim/CopilotChat.nvim'
+" colorscheme
+NeoBundle 'EdenEast/nightfox.nvim'
+NeoBundle 'Rigellute/rigel'
 
 call neobundle#end()
 
@@ -110,7 +116,6 @@ set fillchars+=vert:\|                                       " Delete pipe chara
 set timeoutlen=500 ttimeoutlen=0                           " timeoutlen is used for mapping delays, and ttimeoutlen is used for key code delays
 set clipboard=unnamedplus
 
-
 hi VertSplit guibg=NONE cterm=NONE                          " Transparent background for split borders
 hi CursorLine term=bold cterm=bold guibg=Grey40             " highlight line cursor
 highlight ColorColumn cterm=NONE ctermbg=0 ctermfg=NONE guibg=Grey40
@@ -135,6 +140,8 @@ highlight SpecialKey guifg=#4a4a59
 
 syntax on
 syntax enable
+set termguicolors
+colorscheme nguyenductoan
 
 " Display filename in vim:
 set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\ %{v:servername}
@@ -148,7 +155,7 @@ set clipboard^=unnamed,unnamedplus
 
 set splitright "split new window on the right of the current window
 set splitbelow  " split new win below the current window
-set bg=light    " from neovim version 0.3.2 the default background is 'dark'
+set bg=dark    " from neovim version 0.3.2 the default background is 'dark'
 
 syntime on " user with ':syntime report' to tract performance
 "set ttyfast " use for slow terminal
@@ -170,6 +177,8 @@ set noeb vb t_vb=
 " 1: old regex engine (FATER for ruby file but Vim could hang on a combination of a complex pattern with long text. Eg: hexadecimal number)
 " 2: NFA engine
 set re=0
+"Configure Neovim to Use Python 3
+let g:python3_host_prog = '/opt/homebrew/bin/python3'
 " --------------------------------------------------------
 " VIM MAPPING
 " --------------------------------------------------------
@@ -651,6 +660,12 @@ autocmd FileType go nnoremap <leader>gi :GoImports<cr>
 " --------------------------------------------------------
 
 
+" --------------------------------------------------------
+" CopilotC-Nvim/CopilotChat.nvim
+" --------------------------------------------------------
+nnoremap <leader>ct :CopilotChatToggle<cr>
+
+
 " Super charged File finder
 " --------------------------------------------------------
 " FUNCTIONS
@@ -677,7 +692,8 @@ function! SearchByKeyWordInAllFolders()
   "let dir = input('Enter keywod to search: ')
   call inputrestore()
   "call fzf#vim#ag(dir, "", fzf#vim#layout(expand("<bang>0")))
-  call fzf#vim#ag(keyword, { 'options': g:fzf_preview_source })
+  " search hidden files and directories, ignore '.git'
+  call fzf#vim#ag(keyword, '--hidden --ignore .git', { 'options': g:fzf_preview_source })
 endfunction
 
 function! SearchInSpecificFolder()
