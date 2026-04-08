@@ -1,3 +1,5 @@
+vim.loader.enable()
+
 -- ===================== Bootstrap lazy.nvim =====================
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -11,7 +13,12 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Set leader before lazy so mappings are correct
-vim.g.mapleader = " "
+vim.g.mapleader      = " "
+vim.g.maplocalleader = "\\"
+
+-- Disable netrw (nvim-tree takes over)
+vim.g.loaded_netrw       = 1
+vim.g.loaded_netrwPlugin = 1
 
 -- ===================== Plugins =====================
 require("lazy").setup({
@@ -93,17 +100,16 @@ require("lazy").setup({
   },
 
   -- Ruby / Rails
-  "tpope/vim-rails",
-  "tpope/vim-bundler",
-  "tpope/vim-endwise",
+  { "tpope/vim-rails",   ft = { "ruby", "eruby", "haml" } },
+  { "tpope/vim-bundler", ft = { "ruby", "eruby", "gemspec" } },
+  { "tpope/vim-endwise", ft = { "ruby", "eruby", "lua", "vim" } },
 
   -- Editing helpers
   "tpope/vim-surround",
   { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
-  "terryma/vim-multiple-cursors",
+  "mg979/vim-visual-multi",
   "easymotion/vim-easymotion",
   "rhysd/clever-f.vim",
-  "bronson/vim-trailing-whitespace",
   "ntpeters/vim-better-whitespace",
   "Yggdroot/indentLine",
   "mattn/emmet-vim",
@@ -152,23 +158,17 @@ require("lazy").setup({
   "Glench/Vim-Jinja2-Syntax",
   "tomlion/vim-solidity",
   "hashivim/vim-terraform",
-  { "fatih/vim-go", build = ":GoInstallBinaries" },
-
-  -- Completion
-  { "Shougo/deoplete.nvim", build = ":UpdateRemotePlugins" },
+  { "fatih/vim-go", build = ":GoInstallBinaries", ft = "go" },
 
   -- LSP / COC
   -- Note: install coc-highlight extension via :CocInstall coc-highlight
   { "neoclide/coc.nvim", branch = "release" },
 
-  -- Linting
-  "neomake/neomake",
-
   -- Formatting
   "prettier/vim-prettier",
 
   -- Tags
-  "majutsushi/tagbar",
+  { "majutsushi/tagbar", cmd = "TagbarToggle" },
 
   -- Navigation
   "christoomey/vim-tmux-navigator",
@@ -216,18 +216,17 @@ require("lazy").setup({
 })
 
 -- ===================== VIM SETTINGS =====================
-vim.opt.expandtab     = true
-vim.opt.tabstop       = 2
-vim.opt.shiftwidth    = 2
-vim.opt.softtabstop   = 2
-vim.opt.smartindent   = true
-vim.opt.modeline      = true
-vim.opt.hlsearch      = true
-vim.opt.incsearch     = true
-vim.opt.autoindent    = true
-vim.opt.copyindent    = true
-vim.opt.ruler         = true
-vim.opt.number        = true
+vim.opt.expandtab      = true
+vim.opt.tabstop        = 2
+vim.opt.shiftwidth     = 2
+vim.opt.softtabstop    = 2
+vim.opt.smartindent    = true
+vim.opt.hlsearch       = true
+vim.opt.incsearch      = true
+vim.opt.copyindent     = true
+vim.opt.ruler          = true
+vim.opt.number         = true
+vim.opt.relativenumber = true
 vim.opt.autoread      = true
 vim.opt.backspace     = "indent,eol,start"
 vim.opt.scrolloff     = 5
@@ -292,7 +291,6 @@ vim.cmd([[
   hi link NvimTreeOpenedFolderName Directory
   hi link NvimTreeRootFolder    Identifier
 
-  syntime on
 ]])
 
 -- Autocommands
@@ -435,16 +433,7 @@ vim.g.airline_section_z                            = "%l/%L : %c"
 -- Silver Searcher
 if vim.fn.executable("ag") == 1 then
   vim.opt.grepprg = "ag --nogroup --nocolor"
-  vim.g.ctrlp_use_caching = 0
 end
-
--- Deoplete
-vim.g["deoplete#enable_at_startup"] = 1
-map("i", "<tab>",   function() return vim.fn.pumvisible() == 1 and "<c-n>" or "<c-n>" end, { silent = true, expr = true })
-map("i", "<s-tab>", function() return vim.fn.pumvisible() == 1 and "<c-p>" or "<c-p>" end, { silent = true, expr = true })
-map("i", "<CR>",    function() return vim.fn.pumvisible() == 1 and "<C-Y>" or "<CR>" end,  { expr = true })
-vim.g["deoplete#sources#go#gocode_binary"] = (vim.env.GOPATH or "") .. "/bin/gocode"
-vim.g["deoplete#sources#go#sort_class"]    = { "package", "func", "type", "var", "const" }
 
 -- Fugitive
 map("n", "<Leader>ga",  ":Gwrite<CR>")
@@ -460,12 +449,8 @@ map("n", "<Leader>gr",  ":Gremove<CR>")
 -- indentLine
 vim.g.indentLine_enabled = 1
 
--- CtrlP (kept for tag navigation)
-vim.g.ctrlp_map              = "<c-p>"
-vim.g.ctrlp_cmd              = "CtrlP"
-vim.g.ctrlp_working_path_mode = "r"
-vim.g.ctrlp_regexp           = 1
-map("n", "<leader>.", ":CtrlPTag<CR>")
+-- Tag navigation
+map("n", "<leader>.", "<cmd>lua require('fzf-lua').tags()<CR>", { silent = true, desc = "Find tag" })
 map("n", "<leader>tn", ":tn<CR>")
 map("n", "<leader>tp", ":tp<CR>")
 map("n", "<leader>ts", ":ts<CR>")
@@ -494,6 +479,7 @@ map("", "<Leader>ev", ":Eview<CR>")
 map("", "<Leader>rv", ":RV<CR>")
 
 -- FZF-lua
+map("n", "<Leader><CR>", "<cmd>lua require('fzf-lua').buffers()<CR>",              { silent = true, desc = "Buffers" })
 map("n", "<leader>ff", "<cmd>lua require('fzf-lua').files()<CR>",                  { silent = true, desc = "Find files" })
 map("n", "<leader>fg", "<cmd>lua require('fzf-lua').live_grep()<CR>",              { silent = true, desc = "Live grep" })
 map("n", "<leader>fd", "<cmd>lua require('fzf-lua').live_grep_glob()<CR>",         { silent = true, desc = "Live grep (glob filter)" })
@@ -558,24 +544,6 @@ vim.cmd([[
   function! Update_python_tags()
     return system('ctags -R --fields=+l --languages=python')
   endfunction
-
-  function! s:buflist()
-    redir => ls
-    silent ls
-    redir END
-    return split(ls, '\n')
-  endfunction
-
-  function! s:bufopen(e)
-    execute 'buffer' matchstr(a:e, '^[ 0-9]*')
-  endfunction
-
-  nnoremap <silent> <Leader><Enter> :call fzf#run({
-  \   'source':  reverse(<sid>buflist()),
-  \   'sink':    function('<sid>bufopen'),
-  \   'options': '+m',
-  \   'down':    len(<sid>buflist()) + 2
-  \ })<CR>
 
   command! CloseHiddenBuffers call s:CloseHiddenBuffers()
   function! s:CloseHiddenBuffers()
