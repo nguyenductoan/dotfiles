@@ -16,7 +16,29 @@ vim.g.mapleader = " "
 -- ===================== Plugins =====================
 require("lazy").setup({
   -- File explorer
-  "preservim/nerdtree",
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("nvim-tree").setup({
+        filters = { dotfiles = true },
+        renderer = {
+          icons = {
+            glyphs = {
+              folder = {
+                arrow_open   = "▼",
+                arrow_closed = "▷",
+              },
+            },
+          },
+        },
+      })
+    end,
+    keys = {
+      { "<leader>ls", "<cmd>NvimTreeToggle<CR>",   silent = true, desc = "Toggle file tree" },
+      { "<leader>y",  "<cmd>NvimTreeFindFile<CR>", silent = true, desc = "Find file in tree" },
+    },
+  },
   "preservim/nerdcommenter",
 
   -- Git
@@ -238,6 +260,13 @@ vim.cmd([[
   highlight NonText guifg=#4a4a59
   highlight SpecialKey guifg=#4a4a59
 
+  hi link NvimTreeNormal        Normal
+  hi link NvimTreeEndOfBuffer   NonText
+  hi link NvimTreeCursorLine    CursorLine
+  hi link NvimTreeFolderName    Directory
+  hi link NvimTreeOpenedFolderName Directory
+  hi link NvimTreeRootFolder    Identifier
+
   syntime on
 ]])
 
@@ -425,13 +454,6 @@ map("n", "<Leader>j", "<Plug>(easymotion-overwin-w)", { remap = true })
 
 -- Tagbar
 map("", "<leader>tb", ":TagbarToggle<CR>", { silent = true })
-
--- NERDTree
-map("", "<leader>ls", ":NERDTreeToggle<CR>", { silent = true })
-map("n", "<leader>y", ":NERDTreeFind<CR>",   { silent = true })
-vim.g.NERDTreeShowHidden          = 0
-vim.g.NERDTreeDirArrowExpandable  = "▷"
-vim.g.NERDTreeDirArrowCollapsible = "▼"
 
 -- vim-javascript
 vim.g.javascript_plugin_jsdoc = 1
