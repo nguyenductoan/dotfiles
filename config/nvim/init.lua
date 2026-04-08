@@ -96,7 +96,6 @@ require("lazy").setup({
   "tpope/vim-rails",
   "tpope/vim-bundler",
   "tpope/vim-endwise",
-  "ngmy/vim-rubocop",
 
   -- Editing helpers
   "tpope/vim-surround",
@@ -504,11 +503,6 @@ map("n", "<leader>fr", "<cmd>lua require('fzf-lua').resume()<CR>",              
 
 -- Clever-f
 vim.g.clever_f_across_no_line = 1
-
--- vim-rubocop
-vim.g.vimrubocop_config = ".rubocop.yml"
-vim.g.vimrubocop_keymap = 0
-map("n", "<Leader>r", ":RuboCop<CR>")
 
 -- vim-prettier
 vim.g["prettier#exec_cmd_path"] = ".prettierrc"
