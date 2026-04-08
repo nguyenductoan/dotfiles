@@ -43,7 +43,33 @@ require("lazy").setup({
 
   -- Git
   "tpope/vim-fugitive",
-  "tpope/vim-rhubarb",           -- :GBrowse GitHub URLs
+  {
+    "linrongbin16/gitlinker.nvim",
+    cmd  = "GitLink",
+    keys = {
+      { "<Leader>go",  "<cmd>GitLink!<CR>", mode = { "n", "v" }, desc = "Open in browser" },
+      { "<Leader>gy",  "<cmd>GitLink<CR>",  mode = { "n", "v" }, desc = "Copy git link" },
+    },
+    config = function()
+      local routers = require("gitlinker.routers")
+      require("gitlinker").setup({
+        router = {
+          browse = {
+            ["^ssh%.github%.com"] = function(lk)
+              lk.host = "github.com"
+              return routers.github_browse(lk)
+            end,
+          },
+          blame = {
+            ["^ssh%.github%.com"] = function(lk)
+              lk.host = "github.com"
+              return routers.github_blame_browse(lk)
+            end,
+          },
+        },
+      })
+    end,
+  },
   { "lewis6991/gitsigns.nvim", opts = {} },
   {
     "sindrets/diffview.nvim",
@@ -430,7 +456,7 @@ map("n", "<Leader>gs",  ":Gstatus<CR>")
 map("n", "<Leader>gb",  ":Git blame<CR>")
 --map("n", "<Leader>gd",  ":Gvdiff<CR>")
 map("n", "<Leader>gr",  ":Gremove<CR>")
-map("n", "<Leader>gw",  ":GBrowse<CR>")
+-- <Leader>go and <Leader>gy handled by gitlinker.nvim keys
 
 -- indentLine
 vim.g.indentLine_enabled = 1
