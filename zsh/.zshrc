@@ -200,6 +200,17 @@ export PATH=$PATH:$GOROOT/bin
 alias heroku_pe='heroku accounts:set personal'
 alias heroku_eh='heroku accounts:set eh'
 
+# Start Claude Code connected to the Neovim instance in the same tmux window
+function cc() {
+  local win_id=${TMUX:+$(tmux display-message -p '#{window_id}')}
+  local port_file="$HOME/.claude/ide/nvim_${win_id:-default}.port"
+  if [[ -f "$port_file" ]]; then
+    CLAUDE_CODE_SSE_PORT=$(cat "$port_file") claude "$@"
+  else
+    claude "$@"
+  fi
+}
+
 # include environment variables and secret_key
 if [ -f ~/.env_variables ]; then
     source ~/.env_variables

@@ -16,8 +16,8 @@ vim.g.mapleader = " "
 -- ===================== Plugins =====================
 require("lazy").setup({
   -- File explorer
-  "scrooloose/nerdtree",
-  "scrooloose/nerdcommenter",
+  "preservim/nerdtree",
+  "preservim/nerdcommenter",
 
   -- Git
   "tpope/vim-fugitive",
@@ -31,7 +31,7 @@ require("lazy").setup({
       hooks = {
         diff_buf_read = function(bufnr)
           vim.opt_local.list              = false
-          vim.opt_local.wrap              = false
+          vim.opt_local.wrap              = true
           vim.b[bufnr].indentLine_enabled = 0
         end,
       },
@@ -306,7 +306,7 @@ map("n", "+", ":vertical resize +5<CR>")
 map("n", "_", ":vertical resize -5<CR>")
 
 -- Folding
-map("n", "<Leader>f", "za")
+map("n", "<Leader>z", "za")
 
 -- Paste multiple times
 map("x", "p", "pgvy")
@@ -422,11 +422,11 @@ map("", "<Leader>rv", ":RV<CR>")
 
 -- FZF
 vim.g.fzf_buffers_jump   = 1
-vim.g.fzf_preview_source = " --preview 'pygmentize -g {} 2>/dev/null || head -200 {}'"
-map("", "<leader>sw",  "<ESC>:call SearchByKeyWordInAllFolders()<CR>")
-map("", "<leader>sa",  "<ESC>:call SearchByFileName()<CR>")
-map("", "<leader>d",  "<ESC>:call SearchInSpecificFolder()<CR>")
-map("", "<leader>bb", ":Buffers<CR>")
+vim.g.fzf_layout         = { window = { width = 0.95, height = 0.85, yoffset = 0.5 } }
+map("", "<leader>ff", "<ESC>:call SearchByFileName()<CR>")
+map("", "<leader>fg", "<ESC>:call SearchByKeyWordInAllFolders()<CR>")
+map("", "<leader>fd", "<ESC>:call SearchInSpecificFolder()<CR>")
+map("", "<leader>fb", ":Buffers<CR>")
 
 -- Clever-f
 vim.g.clever_f_across_no_line = 1
@@ -492,14 +492,17 @@ vim.cmd([[
   endfunction
 
   function! SearchByFileName()
-    call fzf#vim#files('.', {'options': g:fzf_preview_source})
+    call fzf#vim#files('.', fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}))
   endfunction
 
   function! SearchByKeyWordInAllFolders()
-    call inputsave()
-    let keyword = input('Enter keyword to search: ')
-    call inputrestore()
-    call fzf#vim#ag(keyword, '--hidden --ignore .git', {'options': g:fzf_preview_source})
+    let l:rg_cmd = 'rg --column --line-number --no-heading --color=always --smart-case --hidden --glob "!.git" -- %s || true'
+    let l:initial = printf(l:rg_cmd, '""')
+    let l:reload  = printf(l:rg_cmd, '{q}')
+    call fzf#vim#grep(l:initial, 1, fzf#vim#with_preview({
+    \   'options': ['--phony', '--query', '', '--bind', 'change:reload:'.l:reload,
+    \               '--layout=reverse', '--info=inline']
+    \ }))
   endfunction
 
   function! SearchInSpecificFolder()
