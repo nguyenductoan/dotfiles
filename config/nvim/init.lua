@@ -304,7 +304,7 @@ vim.g.python3_host_prog = "/opt/homebrew/bin/python3"
 vim.cmd([[
   syntax on
   syntax enable
-  colorscheme nguyenductoan
+  colorscheme custom-theme
 
   hi VertSplit guibg=NONE cterm=NONE
   hi CursorLine term=bold cterm=bold guibg=Grey40
