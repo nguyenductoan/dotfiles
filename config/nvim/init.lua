@@ -28,8 +28,15 @@ require("lazy").setup({
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       require("nvim-tree").setup({
-        filters = { dotfiles = true },
+        filters = { dotfiles = false },
         renderer = {
+          root_folder_label = function(path)
+            local width = vim.api.nvim_win_get_width(0) - 2
+            if #path > width then
+              return "…" .. path:sub(-(width - 1))
+            end
+            return path
+          end,
           icons = {
             glyphs = {
               folder = {
@@ -84,6 +91,14 @@ require("lazy").setup({
     opts = {
       enhanced_diff_hl = true,
       hooks = {
+        view_opened = function()
+          local ok, api = pcall(require, "nvim-tree.api")
+          if ok then api.tree.close() end
+        end,
+        view_closed = function()
+          local ok, api = pcall(require, "nvim-tree.api")
+          if ok then api.tree.open() end
+        end,
         diff_buf_read = function(bufnr)
           vim.opt_local.list              = false
           vim.opt_local.wrap              = true
@@ -148,9 +163,8 @@ require("lazy").setup({
     end,
   },
 
-  -- Search
-  "vim-scripts/grep.vim",
-  "mileszs/ack.vim",
+  -- Keybinding hints
+  { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
 
   -- Languages / Syntax
   "pangloss/vim-javascript",
@@ -189,6 +203,12 @@ require("lazy").setup({
     "coder/claudecode.nvim",
     dependencies = { "folke/snacks.nvim" },
     config = true,
+    opts = {
+      diff_opts = {
+        open_in_new_tab = true,
+        hide_terminal_in_new_tab = true,
+      },
+    },
     keys = {
       { "<leader>a", nil, desc = "AI/Claude Code" },
       { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
@@ -260,7 +280,6 @@ vim.opt.visualbell  = true
 vim.cmd("set t_vb=")
 
 vim.g.python3_host_prog = "/opt/homebrew/bin/python3"
-vim.g.ackprg = "ag --nogroup --nocolor --column"
 
 -- Syntax / colorscheme / highlights
 vim.cmd([[
