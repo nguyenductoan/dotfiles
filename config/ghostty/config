@@ -1,3 +1,54 @@
+# ===================== Appearance =====================
+
+font-family = Monaco
+font-size = 12
+
+background            = #08131a
+foreground            = #e7d3bb
+cursor-color          = #fca02f
+cursor-text           = #08131a
+selection-background  = #1e4862
+selection-foreground  = #e7d3bb
+
+# 16-color ANSI palette (from nguyenductoan iTerm2 profile)
+palette = 0=#17384c
+palette = 1=#d15123
+palette = 2=#027c9b
+palette = 3=#fca02f
+palette = 4=#358794
+palette = 5=#2a8f39
+palette = 6=#50a3b5
+palette = 7=#deb88d
+palette = 8=#434b53
+palette = 9=#d23c28
+palette = 10=#43d24d
+palette = 11=#fdd39f
+palette = 12=#1fe0dd
+palette = 13=#6bb8d0
+palette = 14=#3acb5e
+palette = 15=#fee4ce
+
+background-opacity    = 0.924
+background-blur-radius = 5
+
+window-padding-x = 8
+window-padding-y = 8
+
+# ===================== Behavior =====================
+
+scrollback-limit     = 100000
+copy-on-select       = clipboard
+mouse-hide-while-typing = true
+
+# True color support for tmux + nvim
+term = xterm-256color
+
+# ===================== Vim-mode keybindings for Ghostty =====================
+#
+# Note: We're missing a number of actions to produce a better vim experience.
+# This is what is possible today! But we plan on adding more actions to make
+# this even better in the future.
+
 # Vim-mode keybindings for Ghostty.
 #
 # Note: We're missing a number of actions to produce a better vim experience.

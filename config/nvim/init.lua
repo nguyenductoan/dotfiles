@@ -129,8 +129,28 @@ require("lazy").setup({
   "mattn/emmet-vim",
 
   -- Status line
-  "vim-airline/vim-airline",
-  "vim-airline/vim-airline-themes",
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("lualine").setup({
+        options = {
+          theme                = "auto",
+          section_separators   = "",
+          component_separators = "|",
+          globalstatus         = true,
+        },
+        sections = {
+          lualine_a = { "mode" },
+          lualine_b = { "branch", "diff", "diagnostics" },
+          lualine_c = { { "filename", path = 1 } },
+          lualine_x = { "filetype" },
+          lualine_y = {},
+          lualine_z = { "%l/%L : %c" },
+        },
+      })
+    end,
+  },
 
   -- Fuzzy finder
   {
@@ -438,16 +458,6 @@ map("", "<leader>upt", "<ESC>:call Update_python_tags()<CR>", { silent = true })
 
 -- ===================== PLUGIN SETTINGS =====================
 
--- vim-airline
-vim.g["airline#extensions#tabline#enabled"]        = 1
-vim.g["airline#extensions#tabline#left_sep"]       = " "
-vim.g["airline#extensions#tabline#left_alt_sep"]   = "|"
-vim.g.airline_left_sep                             = "▶"
-vim.g.airline_right_sep                            = "◀"
-vim.g["airline#parts#ffenc#skip_expected_string"]  = "utf-8[unix]"
-vim.g["airline#extensions#tagbar#enabled"]         = 0
-vim.g.airline_section_z                            = "%l/%L : %c"
-
 -- Silver Searcher
 if vim.fn.executable("ag") == 1 then
   vim.opt.grepprg = "ag --nogroup --nocolor"
@@ -501,15 +511,6 @@ vim.g.clever_f_across_no_line = 1
 -- vim-prettier
 vim.g["prettier#exec_cmd_path"] = ".prettierrc"
 map("n", "<Leader>pr", ":Prettier<CR>")
-
--- coc.nvim lightline integration
-vim.g.lightline = {
-  colorscheme = "wombat",
-  active = {
-    left = { { "mode", "paste" }, { "cocstatus", "readonly", "filename", "modified" } },
-  },
-  component_function = { cocstatus = "coc#status" },
-}
 
 -- vim-go
 vim.g.go_fmt_autosave      = 0
