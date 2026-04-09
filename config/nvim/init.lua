@@ -114,8 +114,7 @@ require("lazy").setup({
     },
   },
 
-  -- Ruby / Rails
-  { "tpope/vim-rails",   ft = { "ruby", "eruby", "haml" } },
+  -- Ruby
   { "tpope/vim-bundler", ft = { "ruby", "eruby", "gemspec" } },
   { "tpope/vim-endwise", ft = { "ruby", "eruby", "lua", "vim" } },
 
@@ -486,16 +485,6 @@ map("", "<leader>tb", ":TagbarToggle<CR>", { silent = true })
 
 -- vim-javascript
 vim.g.javascript_plugin_jsdoc = 1
-
--- vim-rails
-map("", "<Leader>c",  ":Vcontroller ")
-map("", "<Leader>vc", ":Vcontroller<CR>")
-map("", "<Leader>ec", ":Econtroller<CR>")
-map("", "<Leader>m",  ":Vmodel ")
-map("", "<Leader>em", ":Emodel<CR>")
-map("", "<Leader>vv", ":Vview ")
-map("", "<Leader>ev", ":Eview<CR>")
-map("", "<Leader>rv", ":RV<CR>")
 
 -- FZF-lua
 map("n", "<Leader><CR>", "<cmd>lua require('fzf-lua').buffers()<CR>",              { silent = true, desc = "Buffers" })
