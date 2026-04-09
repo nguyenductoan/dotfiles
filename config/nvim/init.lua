@@ -30,6 +30,7 @@ require("lazy").setup({
       require("nvim-tree").setup({
         filters = { dotfiles = false },
         renderer = {
+          highlight_git = true,
           root_folder_label = function(path)
             local width = vim.api.nvim_win_get_width(0) - 2
             if #path > width then
@@ -38,10 +39,20 @@ require("lazy").setup({
             return path
           end,
           icons = {
+            show = { git = true },
             glyphs = {
               folder = {
                 arrow_open   = "▼",
                 arrow_closed = "▷",
+              },
+              git = {
+                unstaged  = "✎",  -- modified
+                staged    = "✔",  -- staged
+                unmerged  = "⊕",  -- conflict
+                renamed   = "➜",  -- renamed
+                untracked = "✚",  -- new file
+                deleted   = "✖",  -- deleted
+                ignored   = "◌",  -- ignored
               },
             },
           },
@@ -328,6 +339,14 @@ vim.cmd([[
   hi link NvimTreeFolderName    Directory
   hi link NvimTreeOpenedFolderName Directory
   hi link NvimTreeRootFolder    Identifier
+
+  hi NvimTreeGitNew     guifg=#43D24D  " untracked  ✚ bright green
+  hi NvimTreeGitStaged  guifg=#3ACB5E  " staged     ✔ green
+  hi NvimTreeGitDirty   guifg=#FCA02F  " modified   ✎ orange
+  hi NvimTreeGitRenamed guifg=#1FE0DD  " renamed    ➜ cyan
+  hi NvimTreeGitMerge   guifg=#D23C28  " conflict   ⊕ red
+  hi NvimTreeGitDeleted guifg=#D15123  " deleted    ✖ red-orange
+  hi NvimTreeGitIgnored guifg=#434B53  " ignored    ◌ gray
 
 ]])
 
