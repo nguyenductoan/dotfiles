@@ -1,3 +1,5 @@
+DISABLE_AUTO_UPDATE=true
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -11,6 +13,10 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
+
+  ## KEYCHAIN
+  /usr/bin/keychain $HOME/.ssh/personal_id_rsa
+  source $HOME/.keychain/$(hostname)-sh
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   # zsh
   export ZSH=/Users/$USER/.oh-my-zsh
@@ -22,8 +28,11 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH=/Users/$USER/Library/Python/3.8/bin:$PATH
 
   # nvm
-  export NVM_DIR=~/.nvm
-  source $(brew --prefix nvm)/nvm.sh
+  #export NVM_DIR=~/.nvm
+  #source $(brew --prefix nvm)/nvm.sh
+  #export NVM_DIR="$HOME/.nvm"
+  #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+  #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 else
     echo 'Unknown OS!'
 fi
@@ -106,21 +115,21 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux zsh-completions vi-mode history-substring-search fzf docker-compose kubectl kube-ps1)
+plugins=(git tmux zsh-completions vi-mode history-substring-search fzf docker-compose kubectl asdf kube-ps1)
 
 # rust
-#source $HOME/.cargo/env
+source $HOME/.cargo/env
 
 source $ZSH/oh-my-zsh.sh
 # load zsh-auto-suggestions
 source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-source $ZSH/custom/plugins/kube-ps1/kube-ps1.sh
+#source $ZSH/custom/plugins/kube-ps1/kube-ps1.sh
 
 
 # load kube-ps1
 KUBE_PS1_SYMBOL_ENABLE=false
-#PROMPT=$PROMPT'$(kube_ps1)'
+PROMPT=$PROMPT'$(kube_ps1)'
 
 # custom PROMPT
 NEWLINE=$'\n'
@@ -128,11 +137,6 @@ local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
 PROMPT='%{$fg[green]%}%* |%{$fg[green]%}%p %{$fg[cyan]%}%c %{$fg[blue]%}$(git_prompt_info)%{$fg[blue]%}$(kube_ps1) ${NEWLINE}${ret_status} %{$reset_color%}'
 # precmd() { print "" }
 #RPROMPT=""
-
-
-## KEYCHAIN
-/usr/bin/keychain $HOME/.ssh/personal_id_rsa
-source $HOME/.keychain/$(hostname)-sh
 
 # load zsh-substring-search
 # source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
@@ -190,11 +194,14 @@ bindkey '^T' fzf-completion
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # golang
+echo "Setting up Go environment variables..."
 export GOPATH=$HOME/go-workspace # don't forget to change your path correctly!
 export GOROOT=/usr/local/go # libexec
 export GOBIN=$GOPATH/bin
-export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:$GOROOT/bin
+#export PATH=$PATH:$GOPATH/bin
+#export PATH=$PATH:$GOROOT/bin
+
+export PATH=$GOROOT/bin:$GOBIN:$PATH
 
 # aliases
 alias heroku_pe='heroku accounts:set personal'
@@ -227,7 +234,6 @@ fi
 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -244,9 +250,14 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+# asdf
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+# append completions to fpath
+fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/ndt/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/ndt/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+# npm and yarn
+export PATH=$(npm get prefix)/bin:$PATH
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/ndt/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/ndt/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+export NODE_EXTRA_CA_CERTS="/Users/nguyenductoan/.certs/nscacert.pem"
