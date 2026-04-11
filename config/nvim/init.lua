@@ -380,12 +380,22 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
   command = "silent! !",
 })
 
--- Write claudecode.nvim WebSocket port to a tmux-window-keyed file so the
+-- Write claudecode.nvim WebSocket port to a directory-keyed file so the
 -- `cc` shell function can connect the right Claude Code session to this Neovim.
-local function tmux_window_id()
-  if not os.getenv("TMUX") then return "default" end
-  local id = vim.fn.system("tmux display-message -p '#{window_id}'"):gsub("%s+", "")
-  return id ~= "" and id or "default"
+-- File name: nvim_<cwd-basename>_<counter>.port
+-- Counter = max existing counter for this directory + 1 (starts at 1).
+local port_file_path = nil
+
+local function make_port_path()
+  local dir_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+  local ide_dir  = vim.fn.expand("~/.claude/ide/")
+  local matches  = vim.fn.glob(ide_dir .. "nvim_" .. dir_name .. "_*.port", false, true)
+  local max_n    = 0
+  for _, f in ipairs(matches) do
+    local n = f:match("_(%d+)%.port$")
+    if n then max_n = math.max(max_n, tonumber(n)) end
+  end
+  return ide_dir .. "nvim_" .. dir_name .. "_" .. (max_n + 1) .. ".port"
 end
 
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -394,8 +404,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.defer_fn(function()
       local ok, server = pcall(require, "claudecode.server.init")
       if ok and server.state and server.state.port then
-        local path = vim.fn.expand("~/.claude/ide/nvim_" .. tmux_window_id() .. ".port")
-        local f = io.open(path, "w")
+        port_file_path = make_port_path()
+        local f = io.open(port_file_path, "w")
         if f then f:write(tostring(server.state.port)); f:close() end
       end
     end, 1000)
@@ -405,7 +415,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.api.nvim_create_autocmd("VimLeave", {
   group = augroup,
   callback = function()
-    os.remove(vim.fn.expand("~/.claude/ide/nvim_" .. tmux_window_id() .. ".port"))
+    if port_file_path then os.remove(port_file_path) end
   end,
 })
 
@@ -557,28 +567,3 @@ vim.api.nvim_create_autocmd("FileType", {
     map("n", "<leader>gi",  ":GoImports<CR>", opts)
   end,
 })
-
--- ===================== VIMSCRIPT FUNCTIONS =====================
--- (kept in VimScript for <SID> scoping and legacy FZF helpers)
-vim.cmd([[
-  function! Update_ruby_tags()
-    return system('ctags -R --languages=ruby --exclude=.git --exclude=log . $(bundle list --paths)')
-  endfunction
-
-  function! Update_python_tags()
-    return system('ctags -R --fields=+l --languages=python')
-  endfunction
-
-  command! CloseHiddenBuffers call s:CloseHiddenBuffers()
-  function! s:CloseHiddenBuffers()
-    let open_buffers = []
-    for i in range(tabpagenr('$'))
-      call extend(open_buffers, tabpagebuflist(i + 1))
-    endfor
-    for num in range(1, bufnr("$") + 1)
-      if buflisted(num) && index(open_buffers, num) == -1
-        exec "bdelete " . num
-      endif
-    endfor
-  endfunction
-]])

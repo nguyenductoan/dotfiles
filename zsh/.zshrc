@@ -108,14 +108,33 @@ export NODE_EXTRA_CA_CERTS="$HOME/.certs/nscacert.pem"
 alias heroku_pe='heroku accounts:set personal'
 alias heroku_eh='heroku accounts:set eh'
 
-# Claude Code — connect to Neovim in same tmux window
+# Claude Code — connect to Neovim whose cwd matches the current directory
 function cc() {
-  local win_id=${TMUX:+$(tmux display-message -p '#{window_id}')}
-  local port_file="$HOME/.claude/ide/nvim_${win_id:-default}.port"
-  if [[ -f "$port_file" ]]; then
-    CLAUDE_CODE_SSE_PORT=$(cat "$port_file") claude "$@"
-  else
+  local dir_name="${PWD:t}"
+  local ide_dir="$HOME/.claude/ide"
+  local -a port_files
+  port_files=("${ide_dir}"/nvim_${dir_name}_<->\.port(N))   # glob: <-> matches integers
+
+  if (( ${#port_files} == 0 )); then
+    print "cc: no Neovim port file found for directory '${dir_name}' — starting Claude without IDE connection" >&2
     claude "$@"
+  elif (( ${#port_files} == 1 )); then
+    CLAUDE_CODE_SSE_PORT=$(< "${port_files[1]}") claude "$@"
+  else
+    # Multiple instances — let user pick with arrow keys
+    local chosen
+    chosen=$(printf '%s\n' "${port_files[@]}" | fzf \
+      --prompt="Select Neovim session> " \
+      --height=~10 \
+      --layout=reverse \
+      --no-info \
+      --bind 'enter:accept')
+    if [[ -z "$chosen" ]]; then
+      print "cc: no selection made — starting Claude without IDE connection" >&2
+      claude "$@"
+    else
+      CLAUDE_CODE_SSE_PORT=$(< "$chosen") claude "$@"
+    fi
   fi
 }
 
