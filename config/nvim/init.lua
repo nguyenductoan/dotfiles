@@ -125,7 +125,8 @@ require("lazy").setup({
         diff_buf_read = function(bufnr)
           vim.opt_local.list              = false
           vim.opt_local.wrap              = true
-          vim.b[bufnr].indentLine_enabled = 0
+          local ok, ibl = pcall(require, "ibl")
+          if ok then ibl.setup_buffer(bufnr, { enabled = false }) end
         end,
       },
     },
@@ -148,7 +149,18 @@ require("lazy").setup({
   "easymotion/vim-easymotion",
   "rhysd/clever-f.vim",
   "ntpeters/vim-better-whitespace",
-  "Yggdroot/indentLine",
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    opts = {
+      indent = {
+        char      = "│",
+        tab_char  = "│",
+        highlight = "IblIndent",
+      },
+      scope = { enabled   = false },
+    },
+  },
 
   -- Status line
   {
@@ -335,6 +347,8 @@ vim.cmd([[
   highlight NonText guifg=#4a4a59
   highlight SpecialKey guifg=#4a4a59
 
+  hi IblIndent guifg=#3a3a4a gui=nocombine
+
   hi link NvimTreeNormal        Normal
   hi link NvimTreeEndOfBuffer   NonText
   hi link NvimTreeCursorLine    CursorLine
@@ -354,7 +368,6 @@ vim.cmd([[
 
 -- Autocommands
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
-
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   group = augroup,
@@ -495,9 +508,6 @@ map("n", "<Leader>gb",  ":Git blame<CR>")
 --map("n", "<Leader>gd",  ":Gvdiff<CR>")
 map("n", "<Leader>gr",  ":Gremove<CR>")
 -- <Leader>go and <Leader>gy handled by gitlinker.nvim keys
-
--- indentLine
-vim.g.indentLine_enabled = 1
 
 -- Tag navigation
 map("n", "<leader>.", "<cmd>lua require('fzf-lua').tags()<CR>", { silent = true, desc = "Find tag" })
