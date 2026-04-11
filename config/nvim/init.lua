@@ -32,11 +32,7 @@ require("lazy").setup({
         renderer = {
           highlight_git = true,
           root_folder_label = function(path)
-            local width = vim.api.nvim_win_get_width(0) - 2
-            if #path > width then
-              return "…" .. path:sub(-(width - 1))
-            end
-            return path
+            return vim.fn.fnamemodify(path, ":t")
           end,
           icons = {
             show = { git = true },
@@ -351,7 +347,7 @@ vim.cmd([[
   hi link NvimTreeCursorLine    CursorLine
   hi link NvimTreeFolderName    Directory
   hi link NvimTreeOpenedFolderName Directory
-  hi link NvimTreeRootFolder    Identifier
+  hi NvimTreeRootFolder guifg=#e0af68 gui=bold
 
   hi NvimTreeGitNew     guifg=#43D24D  " untracked  ✚ bright green
   hi NvimTreeGitStaged  guifg=#3ACB5E  " staged     ✔ green
