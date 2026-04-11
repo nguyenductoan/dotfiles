@@ -3,6 +3,7 @@
 -- "ln -s /Users/nguyenductoan/works/personal/dotfiles/config/nvim/lua ~/.config/nvim/lua"
 
 vim.lsp.config("ruby_lsp", {
+  -- Remember to install the Ruby LSP server: "gem install ruby-lsp"
   cmd          = { "ruby-lsp" },
   cmd_env      = { BUNDLE_GEMFILE = "/Users/nguyenductoan/works/tools/vscode-ruby-gemfile/Gemfile" },
   filetypes    = { "ruby", "eruby" },
