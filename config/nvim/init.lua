@@ -229,9 +229,6 @@ require("lazy").setup({
   -- Note: install coc-highlight extension via :CocInstall coc-highlight
   { "neoclide/coc.nvim", branch = "release" },
 
-  -- Formatting
-  "prettier/vim-prettier",
-
   -- Navigation
   "christoomey/vim-tmux-navigator",
 
@@ -536,10 +533,6 @@ map("n", "<leader>fr", "<cmd>lua require('fzf-lua').resume()<CR>",              
 
 -- Clever-f
 vim.g.clever_f_across_no_line = 1
-
--- vim-prettier
-vim.g["prettier#exec_cmd_path"] = ".prettierrc"
-map("n", "<Leader>pr", ":Prettier<CR>")
 
 -- vim-go
 vim.g.go_fmt_autosave      = 0
