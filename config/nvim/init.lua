@@ -526,9 +526,9 @@ vim.g.javascript_plugin_jsdoc = 1
 map("n", "<Leader><CR>", "<cmd>lua require('fzf-lua').buffers()<CR>",              { silent = true, desc = "Buffers" })
 map("n", "<leader>ff", "<cmd>lua require('fzf-lua').files()<CR>",                  { silent = true, desc = "Find files" })
 map("n", "<leader>fg", "<cmd>lua require('fzf-lua').live_grep()<CR>",              { silent = true, desc = "Live grep" })
-map("n", "<leader>fd", "<cmd>lua require('fzf-lua').live_grep_glob()<CR>",         { silent = true, desc = "Live grep (glob filter)" })
 map("n", "<leader>fb", "<cmd>lua require('fzf-lua').buffers()<CR>",                { silent = true, desc = "Buffers" })
 map("n", "<leader>fw", "<cmd>lua require('fzf-lua').grep_cword()<CR>",             { silent = true, desc = "Grep word under cursor" })
+map("v", "<leader>fw", "<cmd>lua require('fzf-lua').grep_visual()<CR>",            { silent = true, desc = "Grep selection" })
 map("n", "<leader>fr", "<cmd>lua require('fzf-lua').resume()<CR>",                 { silent = true, desc = "Resume last search" })
 
 -- Clever-f
