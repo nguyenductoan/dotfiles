@@ -145,12 +145,10 @@ require("lazy").setup({
   -- Editing helpers
   "tpope/vim-surround",
   { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
-  "mg979/vim-visual-multi",
   "easymotion/vim-easymotion",
   "rhysd/clever-f.vim",
   "ntpeters/vim-better-whitespace",
   "Yggdroot/indentLine",
-  "mattn/emmet-vim",
 
   -- Status line
   {
@@ -212,8 +210,6 @@ require("lazy").setup({
   -- Languages / Syntax
   "pangloss/vim-javascript",
   "kchmck/vim-coffee-script",
-  "Glench/Vim-Jinja2-Syntax",
-  "tomlion/vim-solidity",
   "hashivim/vim-terraform",
   { "fatih/vim-go", build = ":GoInstallBinaries", ft = "go" },
 
@@ -224,17 +220,8 @@ require("lazy").setup({
   -- Formatting
   "prettier/vim-prettier",
 
-  -- Tags
-  { "majutsushi/tagbar", cmd = "TagbarToggle" },
-
   -- Navigation
   "christoomey/vim-tmux-navigator",
-
-  -- Terminal
-  "mklabs/split-term.vim",
-
-  -- Session
-  "tpope/vim-obsession",
 
   -- Copilot
   "github/copilot.vim",
@@ -524,9 +511,6 @@ vim.g.EasyMotion_startofline = 0
 map({ "n", "v" }, "/", "<Plug>(easymotion-sn)", { remap = true })
 map("o",           "/", "<Plug>(easymotion-tn)", { remap = true })
 map("n", "<Leader>j", "<Plug>(easymotion-overwin-w)", { remap = true })
-
--- Tagbar
-map("", "<leader>tb", ":TagbarToggle<CR>", { silent = true })
 
 -- vim-javascript
 vim.g.javascript_plugin_jsdoc = 1
