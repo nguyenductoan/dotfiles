@@ -2,7 +2,7 @@
     "languageserver": {
         "golang": {
             "command": "gopls",
-            "args": ["-remote=auto", "-logfile=auto", "-rpc.trace"],
+            "args": [],
             "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
             "filetypes": ["go"]
         }
