@@ -129,6 +129,7 @@ require("lazy").setup({
   { "tpope/vim-bundler", ft = { "ruby", "eruby", "gemspec" } },
   { "tpope/vim-endwise", ft = { "ruby", "eruby", "lua", "vim" } },
 
+
   -- Editing helpers
   "tpope/vim-surround",
   { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
@@ -265,6 +266,8 @@ require("lazy").setup({
   "Rigellute/rigel",
 })
 
+require("lsp")
+
 -- ===================== VIM SETTINGS =====================
 vim.opt.expandtab      = true
 vim.opt.tabstop        = 2
@@ -352,6 +355,7 @@ vim.cmd([[
 
 -- Autocommands
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
+
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   group = augroup,
@@ -558,6 +562,7 @@ vim.api.nvim_create_autocmd("FileType", {
     map("n", "<leader>gi",  ":GoImports<CR>", opts)
   end,
 })
+
 
 -- CopilotChat
 map("n", "<leader>ct", ":CopilotChatToggle<CR>")
