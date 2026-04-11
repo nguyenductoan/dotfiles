@@ -64,7 +64,19 @@ require("lazy").setup({
       { "<leader>y",  "<cmd>NvimTreeFindFile<CR>", silent = true, desc = "Find file in tree" },
     },
   },
-  "preservim/nerdcommenter",
+  {
+    "numToStr/Comment.nvim",
+    opts = {
+      toggler  = { line = "gcc", block = "gbc" },
+      opleader = { line = "gc",  block = "gb"  },
+    },
+    keys = {
+      { "gc",  desc = "Comment line(s)" },
+      { "gb",  desc = "Comment block(s)" },
+      { "gcc", desc = "Toggle line comment" },
+      { "gbc", desc = "Toggle block comment" },
+    },
+  },
 
   -- Git
   "tpope/vim-fugitive",
@@ -562,10 +574,6 @@ vim.api.nvim_create_autocmd("FileType", {
     map("n", "<leader>gi",  ":GoImports<CR>", opts)
   end,
 })
-
-
--- CopilotChat
-map("n", "<leader>ct", ":CopilotChatToggle<CR>")
 
 -- ===================== VIMSCRIPT FUNCTIONS =====================
 -- (kept in VimScript for <SID> scoping and legacy FZF helpers)
