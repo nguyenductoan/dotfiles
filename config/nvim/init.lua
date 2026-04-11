@@ -215,6 +215,24 @@ require("lazy").setup({
   -- Keybinding hints
   { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
 
+  -- Treesitter
+  -- :TSUpdate will download the parsers
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter").setup({
+        ensure_installed = {
+          "go", "ruby", "javascript", "typescript",
+          "lua", "terraform", "hcl", "vim", "vimdoc",
+          "bash", "json", "yaml",
+        },
+        highlight = { enable = true },
+        indent    = { enable = true },
+      })
+    end,
+  },
+
   -- Languages / Syntax
   "pangloss/vim-javascript",
   "kchmck/vim-coffee-script",
@@ -542,9 +560,16 @@ vim.g.clever_f_across_no_line = 1
 
 -- vim-go
 vim.g.go_fmt_autosave      = 0
-vim.g.go_def_mode          = "godef"
 vim.g.go_fmt_fail_silently = 1
-vim.g.go_gopls_enabled     = 0
+vim.g.go_gopls_enabled     = 0   -- coc.nvim owns gopls; don't let vim-go start a second one
+vim.g.go_def_mapping_enabled = 0  -- disable vim-go's gd; we map it to coc below
+-- Let treesitter own Go syntax; disable vim-go's regex highlights
+vim.g.go_highlight_types            = 0
+vim.g.go_highlight_fields           = 0
+vim.g.go_highlight_functions        = 0
+vim.g.go_highlight_function_calls   = 0
+vim.g.go_highlight_operators        = 0
+vim.g.go_highlight_extra_types      = 0
 
 -- Go filetype: coc + vim-go mappings
 vim.api.nvim_create_autocmd("FileType", {
