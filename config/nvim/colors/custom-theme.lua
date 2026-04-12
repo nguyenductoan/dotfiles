@@ -42,14 +42,14 @@ local palette = {
 -- Terafox syntax colours
 local syn = {
   comment  = "#6d7f8b",
-  string   = palette.red.normal,
+  string   = palette.yellow.bright,
   number   = "#ff8349",
   const    = palette.yellow.normal,
   func     = palette.green.normal,
   ident    = palette.green.normal,
-  keyword  = palette.red.normal,
-  cond     = palette.red.normal,
-  type     = palette.red.normal,
+  keyword  = palette.magenta.normal,
+  cond     = palette.yellow.normal,
+  type     = palette.yellow.normal,
   preproc  = palette.green.normal,
   operator = palette.white.bright,
   tag      = palette.red.normal,
@@ -140,30 +140,11 @@ hi("GitGutterAdd",    { fg = ui.green })
 hi("GitGutterChange", { fg = ui.orange })
 hi("GitGutterDelete", { fg = ui.red })
 
--- ── LSP semantic tokens ─────────────────────────────────────────────────────
--- ruby_lsp attaches after treesitter and overwrites colours via @lsp.type.*
--- Pin them here so colours stay stable once LSP connects.
-hi("@lsp.type.method",         { fg = palette.blue.normal })     -- method defs & calls
-hi("@lsp.type.function",       { fg = palette.magenta.normal })  -- bare function calls
-hi("@lsp.type.class",          { fg = syn.type })
-hi("@lsp.type.module",         { fg = syn.type })
-hi("@lsp.type.constant",       { fg = syn.const })
-hi("@lsp.type.variable",       { fg = ui.fg })
-hi("@lsp.type.parameter",      { fg = ui.fg })
-hi("@lsp.type.instanceVariable",{ fg = palette.blue.bright })    -- @ivar
-hi("@lsp.type.classVariable",  { fg = palette.blue.bright })     -- @@cvar
-hi("@lsp.type.namespace",      { fg = syn.type })
-hi("@lsp.type.keyword",        { fg = syn.keyword })
-hi("@lsp.type.comment",        { fg = syn.comment, italic = true })
-hi("@lsp.type.string",         { fg = syn.string })
-hi("@lsp.type.number",         { fg = syn.number })
-hi("@lsp.type.operator",       { fg = syn.operator })
-
 -- ── Treesitter ──────────────────────────────────────────────────────────────
 hi("@keyword.function", { fg = palette.magenta.normal })  -- def, end (method)
 hi("@function",         { fg = palette.blue.normal })    -- method name definition
 hi("@function.method",  { fg = palette.blue.normal })    -- method name (alt capture)
-hi("@function.call",    { fg = palette.magenta.normal }) -- bare method calls (has_many, has_one, …)
-hi("@variable.member",  { fg = palette.blue.bright })    -- instance vars (@foo), class vars (@@foo)
+hi("@function.call",    { fg = palette.cyan.normal }) -- bare method calls (has_many, has_one, …)
+hi("@variable.member",  { fg = palette.magenta.bright })    -- instance vars (@foo), class vars (@@foo)
 hi("@string.content",   { fg = syn.string })
 hi("@string.delimiter", { fg = palette.magenta.normal })
