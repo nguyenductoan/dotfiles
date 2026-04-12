@@ -551,11 +551,34 @@ vim.g.javascript_plugin_jsdoc = 1
 
 -- FZF-lua
 map("n", "<Leader><CR>", "<cmd>lua require('fzf-lua').buffers()<CR>",              { silent = true, desc = "Buffers" })
-map("n", "<leader>ff", "<cmd>lua require('fzf-lua').files()<CR>",                  { silent = true, desc = "Find files" })
-map("n", "<leader>fg", "<cmd>lua require('fzf-lua').live_grep()<CR>",              { silent = true, desc = "Live grep" })
+-- <leader>ff  — find files; filter inside fzf prompt:
+--   user_model          fuzzy match
+--   user_model .rb      only paths containing ".rb"
+--   app/models .rb      under app/models, .rb only
+map("n", "<leader>ff", function()
+  require("fzf-lua").files({ fd_opts = "--color=never --type f --hidden --follow --exclude .git" })
+end, { silent = true, desc = "Find files" })
+-- <leader>fg  — live grep; append " -- <glob>" to filter by filetype:
+--   has_many                   all files
+--   has_many -- *.rb           Ruby files only
+--   render -- *.{rb,erb}       Ruby + ERB
+--   import -- src/**/*.ts      TypeScript under src/
+map("n", "<leader>fg", function()
+  require("fzf-lua").live_grep({
+    glob_flag      = "--iglob",  -- rg flag used before the glob pattern
+    glob_separator = "%s%-%-",   -- separator between pattern and glob
+  })
+end, { silent = true, desc = "Live grep" })
 map("n", "<leader>fb", "<cmd>lua require('fzf-lua').buffers()<CR>",                { silent = true, desc = "Buffers" })
-map("n", "<leader>fw", "<cmd>lua require('fzf-lua').grep_cword()<CR>",             { silent = true, desc = "Grep word under cursor" })
-map("v", "<leader>fw", "<cmd>lua require('fzf-lua').grep_visual()<CR>",            { silent = true, desc = "Grep selection" })
+-- <leader>fw  — grep word/selection; fzf opens pre-filled, append " -- <glob>" to filter:
+--   (cursor on has_many)  <leader>fw           grep "has_many" everywhere
+--   (cursor on has_many)  <leader>fw  then add -- *.rb  to narrow to Ruby files
+map("n", "<leader>fw", function()
+  require("fzf-lua").grep_cword({ glob_flag = "--iglob", glob_separator = "%s%-%-" })
+end, { silent = true, desc = "Grep word under cursor" })
+map("v", "<leader>fw", function()
+  require("fzf-lua").grep_visual({ glob_flag = "--iglob", glob_separator = "%s%-%-" })
+end, { silent = true, desc = "Grep selection" })
 map("n", "<leader>fr", "<cmd>lua require('fzf-lua').resume()<CR>",                 { silent = true, desc = "Resume last search" })
 
 -- Clever-f
