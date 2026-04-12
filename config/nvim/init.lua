@@ -215,20 +215,16 @@ require("lazy").setup({
   -- Keybinding hints
   { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
 
-  -- Treesitter
-  -- :TSUpdate will download the parsers
+  -- Treesitter (requires: brew install tree-sitter-cli)
+  -- Highlighting enabled via FileType autocmd (vim.treesitter built-in).
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter").setup({
-        ensure_installed = {
-          "go", "ruby", "javascript", "typescript",
-          "lua", "terraform", "hcl", "vim", "vimdoc",
-          "bash", "json", "yaml",
-        },
-        highlight = { enable = true },
-        indent    = { enable = true },
+      require("nvim-treesitter.install").install({
+        "go", "ruby", "javascript", "typescript",
+        "lua", "terraform", "hcl", "vim", "vimdoc",
+        "bash", "json", "yaml",
       })
     end,
   },
@@ -376,6 +372,13 @@ vim.cmd([[
   hi NvimTreeGitIgnored guifg=#434B53  " ignored    ◌ gray
 
 ]])
+
+-- Enable treesitter highlighting via Neovim built-in (new nvim-treesitter rewrite)
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function(ev)
+    pcall(vim.treesitter.start, ev.buf)
+  end,
+})
 
 -- Autocommands
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
