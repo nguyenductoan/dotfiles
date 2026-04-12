@@ -109,7 +109,8 @@ alias heroku_pe='heroku accounts:set personal'
 alias heroku_eh='heroku accounts:set eh'
 
 # Claude Code — connect to Neovim whose cwd matches the current directory
-function cc() {
+# Named 'my-claude-code' to avoid shadowing the system C compiler (cc -> clang)
+function my-claude-code() {
   local dir_name="${PWD:t}"
   local ide_dir="$HOME/.claude/ide"
   local -a port_files
