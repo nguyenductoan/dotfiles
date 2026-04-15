@@ -68,6 +68,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if not client or client.name ~= "ruby_lsp" then return end
+    -- Disable semantic tokens — treesitter handles syntax colours
+    client.server_capabilities.semanticTokensProvider = nil
     local opts = { silent = true, buffer = args.buf }
     vim.keymap.set("n", "gd",         require("fzf-lua").lsp_definitions,  opts)
     vim.keymap.set("n", "gr",         require("fzf-lua").lsp_references,   opts)

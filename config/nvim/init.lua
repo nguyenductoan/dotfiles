@@ -282,6 +282,8 @@ require("lazy").setup({
   -- Colorschemes
   "EdenEast/nightfox.nvim",
   "Rigellute/rigel",
+  "ayu-theme/ayu-vim",
+  "talha-akram/noctis.nvim",
 })
 
 require("lsp")
@@ -337,13 +339,6 @@ vim.cmd([[
   syntax on
   syntax enable
   colorscheme custom-theme
-
-  hi VertSplit guibg=NONE cterm=NONE
-  hi CursorLine term=bold cterm=bold guibg=Grey40
-  highlight ColorColumn cterm=NONE ctermbg=0 ctermfg=NONE guibg=Grey40
-  hi SignColumn ctermbg=NONE
-  highlight Visual cterm=NONE ctermbg=0 ctermfg=NONE guibg=Grey40
-  highlight Search cterm=NONE ctermbg=0 ctermfg=NONE guibg=Grey40
 
   hi DiffAdd    ctermfg=231 ctermbg=22  cterm=NONE guifg=NONE   guibg=#1e3a2a
   hi DiffChange ctermfg=231 ctermbg=0   cterm=NONE guifg=NONE   guibg=#1a2a3a
