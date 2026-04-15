@@ -127,10 +127,16 @@ require("lazy").setup({
       },
     },
     keys = {
-      { "<leader>gd", "<cmd>DiffviewOpen<cr>",          desc = "Diff view" },
+      { "<leader>gd", function()
+          local ok, lib = pcall(require, "diffview.lib")
+          if ok and #lib.views > 0 then
+            vim.cmd("DiffviewClose")
+          else
+            vim.cmd("DiffviewOpen")
+          end
+        end, desc = "Toggle diff view" },
       { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "File history" },
       { "<leader>gH", "<cmd>DiffviewFileHistory<cr>",   desc = "Repo history" },
-      { "<leader>gx", "<cmd>DiffviewClose<cr>",         desc = "Close diff view" },
     },
   },
 
