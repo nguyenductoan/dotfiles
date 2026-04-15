@@ -513,6 +513,9 @@ map("n", "yd", ':let @+=expand("%:p:h")<CR>', { silent = true })
 
 map("", "<C-c>", '"+y<CR>')
 
+-- Paste from system clipboard in command-line mode (easymotion search, :commands, etc.)
+map("c", "<C-v>", "<C-r>+", { desc = "Paste from clipboard in cmdline" })
+
 -- Tag update helpers
 map("", "<leader>urt", "<ESC>:call Update_ruby_tags()<CR>",  { silent = true })
 map("", "<leader>upt", "<ESC>:call Update_python_tags()<CR>", { silent = true })
