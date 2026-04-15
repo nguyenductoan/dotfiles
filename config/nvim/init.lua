@@ -230,7 +230,7 @@ require("lazy").setup({
       require("nvim-treesitter.install").install({
         "go", "ruby", "javascript", "typescript",
         "lua", "terraform", "hcl", "vim", "vimdoc",
-        "bash", "json", "yaml",
+        "bash", "json", "yaml", "helm",
       })
     end,
   },
@@ -240,6 +240,7 @@ require("lazy").setup({
   "kchmck/vim-coffee-script",
   "hashivim/vim-terraform",
   { "fatih/vim-go", build = ":GoInstallBinaries", ft = "go" },
+  { "towolf/vim-helm", ft = "helm" },
 
   -- LSP / COC
   -- Note: install coc-highlight extension via :CocInstall coc-highlight
