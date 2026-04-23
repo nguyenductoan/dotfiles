@@ -80,8 +80,9 @@ require("lazy").setup({
     "linrongbin16/gitlinker.nvim",
     cmd  = "GitLink",
     keys = {
-      { "<Leader>go",  "<cmd>GitLink!<CR>", mode = { "n", "v" }, desc = "Open in browser" },
-      { "<Leader>gy",  "<cmd>GitLink<CR>",  mode = { "n", "v" }, desc = "Copy git link" },
+      { "<Leader>go",  "<cmd>GitLink!<CR>",       mode = { "n", "v" }, desc = "Open in browser" },
+      { "<Leader>gy",  "<cmd>GitLink<CR>",        mode = { "n", "v" }, desc = "Copy git link" },
+      { "<Leader>gB",  "<cmd>GitLink! blame<CR>", mode = { "n", "v" }, desc = "Open blame on GitHub" },
     },
     config = function()
       local routers = require("gitlinker.routers")
@@ -96,7 +97,7 @@ require("lazy").setup({
           blame = {
             ["^ssh%.github%.com"] = function(lk)
               lk.host = "github.com"
-              return routers.github_blame_browse(lk)
+              return routers.github_blame(lk)
             end,
           },
         },
@@ -128,12 +129,13 @@ require("lazy").setup({
     },
     keys = {
       { "<leader>gd", function()
-          local ok, lib = pcall(require, "diffview.lib")
-          if ok and #lib.views > 0 then
-            vim.cmd("DiffviewClose")
-          else
-            vim.cmd("DiffviewOpen")
+          for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype == "DiffviewFiles" then
+              vim.cmd("DiffviewClose")
+              return
+            end
           end
+          vim.cmd("DiffviewOpen")
         end, desc = "Toggle diff view" },
       { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "File history" },
       { "<leader>gH", "<cmd>DiffviewFileHistory<cr>",   desc = "Repo history" },
