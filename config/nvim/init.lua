@@ -170,7 +170,8 @@ require("lazy").setup({
 
   -- Editing helpers
   "tpope/vim-surround",
-  { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
+  -- map_cr = false: let coc.nvim's <CR> mapping handle enter (coc#on_enter handles bracket expansion)
+  { "windwp/nvim-autopairs", event = "InsertEnter", opts = { map_cr = false } },
   "easymotion/vim-easymotion",
   "rhysd/clever-f.vim",
   "ntpeters/vim-better-whitespace",
@@ -612,6 +613,31 @@ map("n", "<leader>fr", "<cmd>lua require('fzf-lua').resume()<CR>",              
 
 -- Clever-f
 vim.g.clever_f_across_no_line = 1
+
+-- ── Copilot ───────────────────────────────────────────────────────────────────
+-- Disable default Tab mapping so coc.nvim can own it.
+-- Usage:
+--   <C-j>  — accept the current Copilot ghost-text suggestion
+vim.g.copilot_no_tab_map = true
+map("i", "<C-j>", 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false, silent = true })
+
+-- ── coc.nvim completion ───────────────────────────────────────────────────────
+-- Usage (insert mode, while completion popup is visible):
+--   <Tab>    — select next suggestion
+--   <S-Tab>  — select previous suggestion
+--   <Enter>  — confirm selection  (also expands bracket pairs via coc#on_enter)
+-- When popup is NOT visible:
+--   <Tab>    — insert literal tab at line start, otherwise trigger completion
+--   <S-Tab>  — delete back one char (<C-h>)
+--   <Enter>  — normal newline
+function _G._coc_check_back_space()
+  local col = vim.fn.col('.') - 1
+  return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
+end
+local coc_opts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
+map("i", "<TAB>",   [[coc#pum#visible() ? coc#pum#next(1) : v:lua._coc_check_back_space() ? "\<TAB>" : coc#refresh()]], coc_opts)
+map("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], coc_opts)
+map("i", "<CR>",    [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], coc_opts)
 
 -- vim-go
 vim.g.go_fmt_autosave      = 0
