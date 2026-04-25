@@ -108,6 +108,29 @@ export NODE_EXTRA_CA_CERTS="$HOME/.certs/nscacert.pem"
 alias heroku_pe='heroku accounts:set personal'
 alias heroku_eh='heroku accounts:set eh'
 
+# Fuzzy git branch checkout — no args opens fzf picker, args pass through to git checkout
+# unalias the 'gco' of oh-my-zsh git plugin
+unalias gco 2>/dev/null
+function gco() {
+  if [ $# -eq 0 ]; then
+    local branch
+    branch=$(git branch -a | grep -v HEAD | sed 's|remotes/origin/||' | sort -u | fzf \
+      --height 40% --reverse \
+      --preview 'b=$(echo {} | tr -d " *"); git log --oneline --color=always -20 "$b" 2>/dev/null || git log --oneline --color=always -20 "origin/$b" 2>/dev/null') \
+    && git checkout "$(echo "$branch" | tr -d ' *')"
+  else
+    git checkout "$@"
+  fi
+}
+
+# Fuzzy git branch delete — tab to multi-select, uses -D to force
+function gbdf() {
+  local branches
+  branches=$(git branch | grep -v '^\*' | fzf --multi --height 40% --reverse \
+    --preview 'git log --oneline --color=always -20 $(echo {} | tr -d " ")') \
+  && echo "$branches" | tr -d ' ' | xargs git branch -D
+}
+
 # Claude Code — connect to Neovim whose cwd matches the current directory
 # Named 'my-claude-code' to avoid shadowing the system C compiler (cc -> clang)
 function my-claude-code() {
