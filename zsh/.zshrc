@@ -152,3 +152,9 @@ if [ -f ~/.zsh_aliases ]; then
 else
   print "404: ~/.zsh_aliases not found."
 fi
+
+# Prevent terminal resize (e.g. tmux zoom) from eating the last output line.
+# ZLE miscounts prompt height by 1 when the prompt wraps, so it moves the cursor
+# up one row too many on SIGWINCH. The blank line is sacrificed instead of real output.
+function _precmd_blank_line() { echo }
+add-zsh-hook precmd _precmd_blank_line
