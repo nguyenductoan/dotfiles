@@ -573,6 +573,7 @@ vim.g.EasyMotion_startofline = 0
 map({ "n", "v" }, "/", "<Plug>(easymotion-sn)", { remap = true })
 map("o",           "/", "<Plug>(easymotion-tn)", { remap = true })
 map("n", "<Leader>j", "<Plug>(easymotion-overwin-w)", { remap = true })
+vim.cmd("EMCommandLineNoreMap <C-v> <C-r>+")
 
 -- vim-javascript
 vim.g.javascript_plugin_jsdoc = 1
