@@ -130,15 +130,36 @@ require("lazy").setup({
     keys = {
       { "<leader>gd", function()
           for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-            if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype == "DiffviewFiles" then
+            if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype:match("^Diffview") then
               vim.cmd("DiffviewClose")
               return
             end
           end
           vim.cmd("DiffviewOpen")
         end, desc = "Toggle diff view" },
-      { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "File history" },
-      { "<leader>gH", "<cmd>DiffviewFileHistory<cr>",   desc = "Repo history" },
+      { "<leader>gh", function()
+          for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype:match("^Diffview") then
+              vim.cmd("DiffviewClose")
+              return
+            end
+          end
+          local ft = vim.bo.filetype
+          if ft:match("^Diffview") then
+            vim.cmd("DiffviewFileHistory")
+          else
+            vim.cmd("DiffviewFileHistory %")
+          end
+        end, desc = "Toggle file history" },
+      { "<leader>gH", function()
+          for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype:match("^Diffview") then
+              vim.cmd("DiffviewClose")
+              return
+            end
+          end
+          vim.cmd("DiffviewFileHistory")
+        end, desc = "Toggle repo history" },
     },
   },
 
