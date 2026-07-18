@@ -29,6 +29,11 @@ require("lazy").setup({
     config = function()
       require("nvim-tree").setup({
         filters = { dotfiles = false },
+        actions = {
+          open_file = {
+            window_picker = { enable = false },
+          },
+        },
         renderer = {
           highlight_git = true,
           root_folder_label = function(path)
