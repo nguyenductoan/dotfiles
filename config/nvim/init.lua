@@ -120,10 +120,12 @@ require("lazy").setup({
           if ok then api.tree.open() end
         end,
         diff_buf_read = function(bufnr)
-          vim.opt_local.list              = false
-          vim.opt_local.wrap              = true
           local ok, ibl = pcall(require, "ibl")
           if ok then ibl.setup_buffer(bufnr, { enabled = false }) end
+        end,
+        diff_buf_win_enter = function()
+          vim.opt_local.list = false
+          vim.opt_local.wrap = true
         end,
       },
     },
@@ -335,6 +337,7 @@ vim.opt.autoread      = true
 vim.opt.backspace     = "indent,eol,start"
 vim.opt.scrolloff     = 5
 vim.opt.wrap          = true
+vim.opt.diffopt:append("followwrap") -- keep 'wrap' as-is in diff mode (claudecode.nvim's diffthis-based view would otherwise force it off)
 vim.opt.foldmethod    = "indent"
 vim.opt.foldlevelstart = 20
 vim.opt.wildmenu      = true
