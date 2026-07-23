@@ -225,6 +225,18 @@ require("lazy").setup({
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       require("fzf-lua").setup({
+        fzf_opts = {
+          ["--history"]      = vim.fn.stdpath("data") .. "/fzf-lua-history",
+          ["--history-size"] = 1000,
+        },
+        keymap = {
+          fzf = {
+            ["up"]     = "prev-history",
+            ["down"]   = "next-history",
+            ["ctrl-k"] = "up",
+            ["ctrl-j"] = "down",
+          },
+        },
         winopts = {
           width  = 0.95,
           height = 0.85,
