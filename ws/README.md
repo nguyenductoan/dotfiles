@@ -62,6 +62,7 @@ ws rm -f hotfix                    # force-remove even with uncommitted changes
 |---|---|
 | `prefix + N` | New task (asks for a branch name) |
 | `prefix + W` | Task picker |
+| `prefix + X` | Finish this task (`ws rm` in a popup) |
 | `prefix + <n>` | Switch task (window) |
 | `prefix + l` | Session (repo) picker; `→` expands a session's windows |
 | `prefix + j` / `prefix + k` | Next / previous repo |
@@ -80,7 +81,7 @@ ws rm -f hotfix                    # force-remove even with uncommitted changes
 4. Start more tasks the same way. They run in parallel, each in its own folder and branch.
 5. Hop between tasks with `prefix + <n>` or `prefix + W`, and between repos with `prefix + l`.
 6. Coming back to a task: `ws open <branch>`, then `claude --continue --ide` to resume that folder's last conversation.
-7. After the PR is merged, run `ws rm` in that window. It refuses if the worktree has uncommitted changes, removes it, asks before deleting the branch, and closes the window.
+7. After the PR is merged, run `ws rm` (or `prefix + X`) in that window. It refuses if the worktree has uncommitted changes, removes it, asks before deleting the branch, and closes the window.
 
 ## Per-repo hooks (optional)
 
