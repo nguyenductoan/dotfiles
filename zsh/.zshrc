@@ -109,69 +109,15 @@ export NODE_EXTRA_CA_CERTS="$HOME/.certs/nscacert.pem"
 alias heroku_pe='heroku accounts:set personal'
 alias heroku_eh='heroku accounts:set eh'
 
-
-# Override aws plugin's aws_prompt_info to show profile name only
-function aws_prompt_info() {
-  [[ -n "$AWS_PROFILE" ]] && echo " (%{$fg[blue]%}aws:%{$fg[cyan]%}$AWS_PROFILE%{$fg[blue]%})"
-}
-
 # granted
 export GRANTED_DISABLE_PROMPT=true
 alias assume="source $(brew --prefix)/bin/assume"
 
-# Fuzzy git branch checkout — no args opens fzf picker, args pass through to git checkout
-# unalias the 'gco' of oh-my-zsh git plugin
-unalias gco 2>/dev/null
-function gco() {
-  if [ $# -eq 0 ]; then
-    local branch
-    branch=$({ git branch --show-current | sed 's/^/* /'; git branch --sort=-committerdate | grep -v '^\*'; } | fzf \
-      --height 40% --reverse \
-      --preview 'b=$(echo {} | tr -d " *"); git log --oneline --color=always -20 "$b" 2>/dev/null') \
-    && git checkout "$(echo "$branch" | tr -d ' *')"
-  else
-    git checkout "$@"
-  fi
-}
-
-# Fuzzy git branch delete — tab to multi-select, uses -D to force
-function gbdf() {
-  local branches
-  branches=$(git branch | grep -v '^\*' | fzf --multi --height 40% --reverse \
-    --preview 'git log --oneline --color=always -20 $(echo {} | tr -d " ")') \
-  && echo "$branches" | tr -d ' ' | xargs git branch -D
-}
-
-# Claude Code — connect to Neovim whose cwd matches the current directory
-# Named 'my-claude-code' to avoid shadowing the system C compiler (cc -> clang)
-function my-claude-code() {
-  local dir_name="${PWD:t}"
-  local ide_dir="$HOME/.claude/ide"
-  local -a port_files
-  port_files=("${ide_dir}"/nvim_${dir_name}_<->\.port(N))   # glob: <-> matches integers
-
-  if (( ${#port_files} == 0 )); then
-    print "cc: no Neovim port file found for directory '${dir_name}' — starting Claude without IDE connection" >&2
-    claude "$@"
-  elif (( ${#port_files} == 1 )); then
-    CLAUDE_CODE_SSE_PORT=$(< "${port_files[1]}") claude "$@"
-  else
-    # Multiple instances — let user pick with arrow keys
-    local chosen
-    chosen=$(printf '%s\n' "${port_files[@]}" | fzf \
-      --prompt="Select Neovim session> " \
-      --height=~10 \
-      --layout=reverse \
-      --no-info \
-      --bind 'enter:accept')
-    if [[ -z "$chosen" ]]; then
-      print "cc: no selection made — starting Claude without IDE connection" >&2
-      claude "$@"
-    else
-      CLAUDE_CODE_SSE_PORT=$(< "$chosen") claude "$@"
-    fi
-  fi
-}
+# Shell functions, one file per topic (prompt, git, claude) in zsh/functions/.
+# Must stay after oh-my-zsh: git.zsh replaces the git plugin's `gco` alias.
+# ${(%):-%x}:A resolves the ~/.zshrc symlink to this repo, wherever it is cloned.
+for f in ${${(%):-%x}:A:h}/functions/*.zsh(N); do source "$f"; done
+unset f
 
 # Environment variables and secrets
 if [ -f ~/.env_variables ]; then
