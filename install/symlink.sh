@@ -33,6 +33,12 @@ link config/nvim/lua               ~/.config/nvim/lua
 link config/nvim/colors            ~/.config/nvim/colors
 link config/nvim/coc-settings.json ~/.config/nvim/coc-settings.json
 
+echo "ghostty"
+# ~/.config/ghostty works on macOS and Linux. On macOS Ghostty also reads
+# ~/Library/Application Support/com.mitchellh.ghostty/config(.ghostty) afterwards,
+# so anything set there overrides this file.
+link config/ghostty/config ~/.config/ghostty/config
+
 echo "zsh"
 # .env_variables holds machine-local secrets: copy once, never overwrite
 if [ ! -e ~/.env_variables ]; then
