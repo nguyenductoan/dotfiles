@@ -28,3 +28,7 @@ echo "symlink tmux config environment"
 ln -s -f ~/works/dotfiles/tmux/dev_env ~/dev_env
 ln -s -f ~/works/dotfiles/tmux/lixibox_env ~/lixibox_env
 
+echo "symlink ws (git worktree + tmux task manager)"
+DOTFILES=$(cd "$(dirname "$0")/.." && pwd)
+mkdir -p ~/.local/bin
+ln -s -f "$DOTFILES/ws/ws" ~/.local/bin/ws
