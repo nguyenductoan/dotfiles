@@ -125,9 +125,9 @@ unalias gco 2>/dev/null
 function gco() {
   if [ $# -eq 0 ]; then
     local branch
-    branch=$(git branch -a | grep -v HEAD | sed 's|remotes/origin/||' | sort -u | fzf \
+    branch=$({ git branch --show-current | sed 's/^/* /'; git branch --sort=-committerdate | grep -v '^\*'; } | fzf \
       --height 40% --reverse \
-      --preview 'b=$(echo {} | tr -d " *"); git log --oneline --color=always -20 "$b" 2>/dev/null || git log --oneline --color=always -20 "origin/$b" 2>/dev/null') \
+      --preview 'b=$(echo {} | tr -d " *"); git log --oneline --color=always -20 "$b" 2>/dev/null') \
     && git checkout "$(echo "$branch" | tr -d ' *')"
   else
     git checkout "$@"
