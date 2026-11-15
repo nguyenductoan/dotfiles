@@ -1,34 +1,51 @@
-echo -e "\n\nCopy config file..."
-echo "=============================="
+#!/usr/bin/env bash
+# Symlink dotfiles into $HOME. Works wherever this repo is cloned; re-run after moving it.
+set -euo pipefail
 
-echo "symlink gitcofig and gitignore_global"
-ln -s -f ~/works/dotfiles/git/.gitconfig ~/.gitconfig
-ln -s -f ~/works/dotfiles/git/.gitignore_global ~/.gitignore_global
-
-echo "symlink inputrc config file"
-ln -s -f ~/works/dotfiles/config/.inputrc ~/.inputrc
-
-echo "symlink neovim config"
-if [ ! -d "~/.config/nvim" ]; then
-  mkdir -p ~/.config/nvim
-fi
-ln -s -f ~/works/dotfiles/config/nvim/init.vim ~/.config/nvim/init.vim
-
-echo "copy zsh config"
-if [ ! -d "~/.env_variables" ]; then
-  cp -p ~/works/dotfiles/zsh/.env_variables ~/
-fi
-ln -s -f ~/works/dotfiles/zsh/.zshrc ~/.zshrc
-
-echo "symlink tmux config"
-ln -s -f ~/works/dotfiles/tmux/.tmux.conf ~/.tmux.conf
-
-echo "symlink tmux config environment"
-# note: manually set excution permission for the following files
-ln -s -f ~/works/dotfiles/tmux/dev_env ~/dev_env
-ln -s -f ~/works/dotfiles/tmux/lixibox_env ~/lixibox_env
-
-echo "symlink ws (git worktree + tmux task manager)"
 DOTFILES=$(cd "$(dirname "$0")/.." && pwd)
-mkdir -p ~/.local/bin
-ln -s -f "$DOTFILES/ws/ws" ~/.local/bin/ws
+
+# link <repo-relative src> <dest>: back up a real file/dir at dest, then symlink.
+# -n: replace an existing symlink-to-dir instead of creating a link inside it.
+link() {
+  local src="$DOTFILES/$1" dest=$2
+  [ -e "$src" ] || { echo "  skip $1 (missing)"; return 0; }
+  mkdir -p "$(dirname "$dest")"
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    mv "$dest" "$dest.bak.$(date +%Y%m%d%H%M%S)"
+    echo "  backed up existing $dest"
+  fi
+  ln -sfn "$src" "$dest"
+  echo "  $dest -> $src"
+}
+
+echo "Symlinking dotfiles from $DOTFILES"
+
+echo "git"
+link git/.gitconfig        ~/.gitconfig
+link git/.gitignore_global ~/.gitignore_global
+
+echo "inputrc"
+link config/.inputrc ~/.inputrc
+
+echo "neovim"
+link config/nvim/init.lua          ~/.config/nvim/init.lua
+link config/nvim/lua               ~/.config/nvim/lua
+link config/nvim/colors            ~/.config/nvim/colors
+link config/nvim/coc-settings.json ~/.config/nvim/coc-settings.json
+
+echo "zsh"
+# .env_variables holds machine-local secrets: copy once, never overwrite
+if [ ! -e ~/.env_variables ]; then
+  cp -p "$DOTFILES/zsh/.env_variables" ~/
+  echo "  copied ~/.env_variables"
+fi
+link zsh/.zshrc ~/.zshrc
+
+echo "tmux"
+link tmux/.tmux.conf ~/.tmux.conf
+# note: manually set execution permission for the following files
+link tmux/dev_env     ~/dev_env
+link tmux/lixibox_env ~/lixibox_env
+
+echo "ws (git worktree + tmux task manager)"
+link ws/ws ~/.local/bin/ws
