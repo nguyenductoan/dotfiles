@@ -62,7 +62,7 @@ ws rm -f hotfix                    # force-remove even with uncommitted changes
 |---|---|
 | `prefix + N` | New task (asks for a branch name) |
 | `prefix + W` | Task picker |
-| `prefix + X` | Finish this task (`ws rm` in a popup) |
+| `prefix + X` | Finish this task (asks y/n, then `ws rm` in a popup) |
 | `prefix + <n>` | Switch task (window) |
 | `prefix + l` | Session (repo) picker; `→` expands a session's windows |
 | `prefix + j` / `prefix + k` | Next / previous repo |
