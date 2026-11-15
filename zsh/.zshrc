@@ -67,7 +67,8 @@ source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 KUBE_PS1_SYMBOL_ENABLE=false
 NEWLINE=$'\n'
 ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
-PROMPT='%{$fg[green]%}%* |%{$fg[green]%}%p %{$fg[cyan]%}%c %{$fg[blue]%}$(git_prompt_info)%{$fg[blue]%}$(kube_ps1) ${NEWLINE}${ret_status} %{$reset_color%}'
+PROMPT='%{$fg[green]%}%* |%{$fg[green]%}%p %{$fg[cyan]%}%c %{$fg[blue]%}$(git_prompt_info)%{$fg[blue]%}$(kube_ps1)$(aws_prompt_info) ${NEWLINE}${ret_status} %{$reset_color%}'
+RPROMPT=''
 
 # Key bindings
 bindkey -M vicmd 'k' history-substring-search-up
@@ -107,6 +108,16 @@ export NODE_EXTRA_CA_CERTS="$HOME/.certs/nscacert.pem"
 # Aliases
 alias heroku_pe='heroku accounts:set personal'
 alias heroku_eh='heroku accounts:set eh'
+
+
+# Override aws plugin's aws_prompt_info to show profile name only
+function aws_prompt_info() {
+  [[ -n "$AWS_PROFILE" ]] && echo " (%{$fg[blue]%}aws:%{$fg[cyan]%}$AWS_PROFILE%{$fg[blue]%})"
+}
+
+# granted
+export GRANTED_DISABLE_PROMPT=true
+alias assume="source $(brew --prefix)/bin/assume"
 
 # Fuzzy git branch checkout — no args opens fzf picker, args pass through to git checkout
 # unalias the 'gco' of oh-my-zsh git plugin
