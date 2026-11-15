@@ -2,7 +2,8 @@
 
 # my-claude-code [claude args...] — start Claude Code connected to the Neovim
 # (claudecode.nvim) running in a folder with the same name as the current one.
-#   - Looks for ~/.claude/ide/nvim_<folder-name>_<port>.port files.
+#   - Looks for ~/.claude/ide/nvim_<folder-name>_<n>.port files (written by
+#     config/nvim/init.lua) and deletes any whose nvim is no longer running.
 #   - None found: starts plain `claude` without an IDE connection.
 #   - One found: connects to it via CLAUDE_CODE_SSE_PORT.
 #   - Several (multiple nvim instances): fzf picker to choose one.
@@ -13,6 +14,20 @@ function my-claude-code() {
   local ide_dir="$HOME/.claude/ide"
   local -a port_files
   port_files=("${ide_dir}"/nvim_${dir_name}_<->\.port(N))   # glob: <-> matches integers
+
+  # Drop orphaned port files: nvim removes its file on VimLeave, which doesn't run when
+  # nvim is killed (e.g. tmux session killed). Keep a file only if an nvim process is
+  # still listening on its port (-c nvim guards against the port being reused).
+  local -a live_files
+  local f
+  for f in $port_files; do
+    if lsof -nP -a -c nvim -iTCP:"$(< $f)" -sTCP:LISTEN >/dev/null 2>&1; then
+      live_files+=("$f")
+    else
+      rm -f "$f"
+    fi
+  done
+  port_files=($live_files)
 
   if (( ${#port_files} == 0 )); then
     print "cc: no Neovim port file found for directory '${dir_name}' — starting Claude without IDE connection" >&2
