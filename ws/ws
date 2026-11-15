@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+# ws — one task = one git worktree = one tmux window (you start nvim/claude yourself)
+#
+#   ws new <branch> [base]   create worktree (+branch) and open an empty task window
+#   ws open [branch]         open/switch to a task window (fzf picker if no arg)
+#   ws ls                    list worktrees
+#   ws rm [-f] [branch]      close window, remove worktree, offer to delete branch
+#
+# Layout:  <parent>/<repo>                   main checkout
+#          <parent>/<repo>.worktrees/<b>     one dir per task
+# tmux:    session "<repo>", one window per task, named after the branch
+#
+# Optional per-repo hooks (first found wins):
+#   include list : <repo>/.worktreeinclude  or ~/.config/ws/<repo>.include
+#                  gitignored files/globs to copy into new worktrees (.env, config/master.key …)
+#   setup script : <repo>/.worktree-setup   or ~/.config/ws/<repo>.setup
+#                  run inside the new worktree right after it is created (bundle install …)
+set -euo pipefail
+
+die() { echo "ws: $*" >&2; exit 1; }
+usage() { sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+case ${1:-} in new|open|o|ls|rm) ;; -h|--help|help) usage 0 ;; *) usage 1 ;; esac
+
+common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || die "not inside a git repo"
+ROOT=$(dirname "$common")                 # main checkout, even when called from a linked worktree
+REPO=$(basename "$ROOT")
+WS_BASE="$(dirname "$ROOT")/$REPO.worktrees"
+SESSION=${REPO//./_}
+
+slug()    { local s=${1//\//-}; echo "${s//./_}"; }   # feature/a.b -> feature-a_b (tmux-safe)
+ws_path() { echo "$WS_BASE/$(slug "$1")"; }
+
+hook_file() { # $1 = repo-local name, $2 = ~/.config suffix
+  for f in "$ROOT/$1" "$HOME/.config/ws/$REPO.$2"; do [[ -f $f ]] && { echo "$f"; return; }; done
+}
+
+default_base() {
+  git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo main
+}
+
+copy_includes() { # $1 = new worktree dir
+  local list; list=$(hook_file .worktreeinclude include) || return 0
+  [[ -n $list ]] || return 0
+  ( cd "$ROOT"; shopt -s nullglob
+    while IFS= read -r pat; do
+      [[ -z $pat || $pat == \#* ]] && continue
+      for f in $pat; do
+        mkdir -p "$1/$(dirname "$f")"
+        cp -R "$f" "$1/$f"
+        echo "  copied $f"
+      done
+    done < "$list" )
+}
+
+window_id() { # $1 = window name -> prints @id if it exists in the repo session
+  tmux list-windows -t "=$SESSION" -F '#{window_id} #{window_name}' 2>/dev/null \
+    | awk -v n="$1" '$2==n {print $1; exit}'
+}
+
+focus() { # $1 = window id
+  if [[ -n ${TMUX:-} ]]; then
+    tmux switch-client -t "$1"
+  else
+    tmux attach-session -t "$1"
+  fi
+}
+
+open_window() { # $1 dir, $2 window name — one plain shell pane in $dir
+  local dir=$1 name=$2 win
+  if win=$(window_id "$name") && [[ -n $win ]]; then focus "$win"; return; fi
+
+  if tmux has-session -t "=$SESSION" 2>/dev/null; then
+    win=$(tmux new-window -d -P -F '#{window_id}' -t "=$SESSION:" -n "$name" -c "$dir")
+  else
+    win=$(tmux new-session -d -P -F '#{window_id}' -s "$SESSION" -n "$name" -c "$dir")
+  fi
+  focus "$win"
+}
+
+cmd_new() {
+  local branch=${1:?usage: ws new <branch> [base]} base=${2:-} dir setup
+  dir=$(ws_path "$branch")
+  [[ -e $dir ]] && die "$dir already exists — use: ws open $branch"
+
+  git -C "$ROOT" fetch -q origin || echo "ws: fetch failed, continuing with local refs" >&2
+  mkdir -p "$WS_BASE"
+  if git -C "$ROOT" show-ref -q --verify "refs/heads/$branch" \
+     || git -C "$ROOT" show-ref -q --verify "refs/remotes/origin/$branch"; then
+    git -C "$ROOT" worktree add "$dir" "$branch"            # existing local/remote branch
+  else
+    base=${base:-$(default_base)}
+    git -C "$ROOT" worktree add --no-track -b "$branch" "$dir" "$base"
+  fi
+
+  copy_includes "$dir"
+  if setup=$(hook_file .worktree-setup setup) && [[ -n $setup ]]; then
+    echo "running $setup"
+    ( cd "$dir" && WS_ROOT=$ROOT bash "$setup" ) || echo "ws: setup failed, opening window anyway" >&2
+  fi
+  open_window "$dir" "$(slug "$branch")"
+}
+
+pick() { # fzf over worktrees -> prints "path branch"
+  git -C "$ROOT" worktree list --porcelain | awk '
+    /^worktree /{p=substr($0,10)} /^branch /{sub("refs/heads/","",$2); print p "\t" $2}
+    /^detached/{print p "\t(detached)"}' \
+  | fzf --with-nth=2 --delimiter='\t' --prompt="$REPO task> " --height=40% --reverse \
+        --preview 'git -C {1} -c color.status=always status -sb; echo; git -C {1} log --oneline --color -8'
+}
+
+cmd_open() {
+  local dir branch name
+  if [[ -n ${1:-} ]]; then
+    branch=$1; dir=$(ws_path "$branch")
+    [[ $branch == "$(git -C "$ROOT" branch --show-current)" ]] && dir=$ROOT
+    [[ -d $dir ]] || die "no worktree for $branch — use: ws new $branch"
+  else
+    IFS=$'\t' read -r dir branch < <(pick) || exit 0
+  fi
+  [[ $dir == "$ROOT" ]] && name=main || name=$(slug "$branch")
+  open_window "$dir" "$name"
+}
+
+cmd_ls() { git -C "$ROOT" worktree list; }
+
+cmd_rm() {
+  local force=0 dir branch win
+  [[ ${1:-} == -f ]] && { force=1; shift; }
+  if [[ -n ${1:-} ]]; then
+    branch=$1; dir=$(ws_path "$branch")
+  else
+    dir=$(git rev-parse --show-toplevel); branch=$(git branch --show-current)
+  fi
+  [[ $dir == "$ROOT" ]] && die "refusing to remove the main checkout"
+  [[ -d $dir ]] || die "no worktree at $dir"
+
+  if [[ $force == 0 && -n $(git -C "$dir" status --porcelain) ]]; then
+    git -C "$dir" status -s; die "worktree is dirty — commit/stash or use: ws rm -f $branch"
+  fi
+  cd "$ROOT"
+  win=$(window_id "$(slug "$branch")") || true
+  if [[ $force == 1 ]]; then git worktree remove --force "$dir"; else git worktree remove "$dir"; fi
+  git worktree prune
+  echo "removed $dir"
+  if [[ -n $branch ]]; then
+    read -r -p "delete branch $branch? [y/N] " ans
+    [[ $ans == [yY] ]] && { git branch -d "$branch" || echo "(not merged — use git branch -D $branch)"; }
+  fi
+  [[ -n ${win:-} ]] && tmux kill-window -t "$win"   # last: may be the window we're running in
+  return 0
+}
+
+case ${1:-} in
+  new)  shift; cmd_new "$@" ;;
+  open|o) shift; cmd_open "$@" ;;
+  ls)   cmd_ls ;;
+  rm)   shift; cmd_rm "$@" ;;
+  *)    usage 1 ;;
+esac
